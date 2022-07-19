@@ -17,7 +17,7 @@ class UserAPIView(APIView):
         try:
             return User.objects.filter(pk=pk)
         except User.DoesNotExist:
-            raise UserDoesNotExistAPIException
+            raise Http404
 
     def get(self, request, pk=None, format=None):
         if pk:
@@ -72,7 +72,7 @@ class UserAPIView(APIView):
 
 class TreatmentAPIView(APIView):
 
-    def get_treatmentDescription(self, pk):
+    def get_treatment(self, pk):
         try:
             return Treatment.objects.filter(pk=pk)
         except Treatment.DoesNotExist:
@@ -80,7 +80,7 @@ class TreatmentAPIView(APIView):
 
     def get(self, request, pk=None, format=None):
         if pk:
-            data = self.get_treatmentDescription(pk)
+            data = self.get_treatment(pk)
         else:
             data = Treatment.objects.all()
         serializer = TreatmentSerializer(data, many=True)
@@ -97,15 +97,15 @@ class TreatmentAPIView(APIView):
         response = Response()
 
         response.data = {
-            'message': 'TreatmentDescription Created Successfully',
+            'message': 'Treatment created successfully',
             'data': serializer.data
         }
 
         return response
 
     def put(self, request, pk=None, format=None):
-        treatmentDescription_to_update = Treatment.objects.get(pk=pk)
-        serializer = TreatmentSerializer(instance=treatmentDescription_to_update, data=request.data,
+        treatment_to_update = Treatment.objects.get(pk=pk)
+        serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data,
                                          partial=True)
 
         serializer.is_valid(raise_exception=True)
@@ -115,19 +115,19 @@ class TreatmentAPIView(APIView):
         response = Response()
 
         response.data = {
-            'message': 'treatmentDescription Updated Successfully',
+            'message': 'Treatment updated successfully',
             'data': serializer.data
         }
 
         return response
 
     def delete(self, request, pk, format=None):
-        treatmentDescription_to_delete = Treatment.objects.get(pk=pk)
+        treatment_to_delete = Treatment.objects.get(pk=pk)
 
-        treatmentDescription_to_delete.delete()
+        treatment_to_delete.delete()
 
         return Response({
-            'message': 'TreatmentDescription Deleted Successfully'
+            'message': 'Treatment deleted successfully'
         })
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
