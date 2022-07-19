@@ -7,7 +7,7 @@ from rest_framework.validators import UniqueValidator
 # from base.exceptions import EmailAlreadyExists, FormInvalid
 # from projectapp.models import User, TokenRequest
 # from projectapp.services.user_service import UserService
-from projectapp.models import User
+from projectapp.models import User, Treatment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,6 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
                   'presentation', 'pic_url']
+
+
+class TreatmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Treatment
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'rating', 'id')
+
 
 #     def is_valid(self, raise_exception=False):
 #         try:

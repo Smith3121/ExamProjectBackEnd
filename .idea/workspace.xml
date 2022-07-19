@@ -3,13 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f808ab22-9f44-4eeb-bd4b-6ccbed34e925" name="Changes" comment="blank files, folders">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/projectapp/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/repository.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/services/email_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/services/email_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/services/token_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/services/token_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/services/user_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/signals.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/views.py" afterDir="false" />
     </list>
@@ -89,7 +85,7 @@
       <workItem from="1657862147451" duration="12666000" />
       <workItem from="1658121080287" duration="28527000" />
       <workItem from="1658207426694" duration="4808000" />
-      <workItem from="1658212934402" duration="2023000" />
+      <workItem from="1658212934402" duration="4914000" />
     </task>
     <task id="LOCAL-00001" summary="blank files, folders">
       <created>1657699488957</created>

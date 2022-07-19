@@ -1,6 +1,7 @@
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import CharField
 
 from base.models import TimeStampedModel
 
@@ -29,9 +30,19 @@ class User(AbstractUser):
     presentation = models.TextField(blank=True)
     pic_url = models.CharField(max_length=100)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.username
 
+
+class Treatment(models.Model):
+    treatment_name = models.CharField(max_length=100)
+    pic_url = models.CharField(max_length=100)
+    treatment_description = models.TextField(blank=True)
+    comment = models.TextField(blank=True)
+    rating = models.IntegerField(default=0)
+
+    def __str__(self) -> CharField:
+        return self.treatment_name
 
 # class TokenRequest(TimeStampedModel):
 #     user_id = models.UUIDField(db_column='userId', default=None, null=True, blank=True)
