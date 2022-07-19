@@ -30,20 +30,20 @@ class User(AbstractUser):
     pic_url = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
-class TokenRequest(TimeStampedModel):
-    user_id = models.UUIDField(db_column='userId', default=None, null=True, blank=True)
-    email = models.CharField(max_length=254, default=None, null=True, blank=True)
-    mtoken = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.email
-
-
-class MTokenRequest(TimeStampedModel):
-    email = models.CharField(max_length=254)
-
-    def __str__(self):
-        return self.email
+# class TokenRequest(TimeStampedModel):
+#     user_id = models.UUIDField(db_column='userId', default=None, null=True, blank=True)
+#     email = models.CharField(max_length=254, default=None, null=True, blank=True)
+#     mtoken = models.CharField(max_length=100)
+#
+#     def __str__(self):
+#         return self.email
+#
+#
+# class MTokenRequest(TimeStampedModel):
+#     email = models.CharField(max_length=254)
+#
+#     def __str__(self):
+#         return self.email

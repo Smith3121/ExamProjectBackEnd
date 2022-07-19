@@ -1,9 +1,9 @@
+from django.urls import path
 from rest_framework import routers
 from . import views
-router = routers.DefaultRouter(trailing_slash=False)
+from .views import UserAPIView
 
-router.register('user', views.UserViewSet, basename='user')
-# router.register('token', views.TokenViewSet, basename='user')
-# router.register('mtoken', views.MTokenViewSet, basename='user')
-
-urlpatterns = router.urls
+urlpatterns = [
+    path('user', UserAPIView.as_view()),
+    path('user/<str:pk>', UserAPIView.as_view()),  # to capture our ids
+]

@@ -2,23 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f808ab22-9f44-4eeb-bd4b-6ccbed34e925" name="Changes" comment="blank files, folders">
-      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/environment/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/environment/env.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/environment/handler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/projectapp/services/email_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/projectapp/services/token_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/projectapp/services/user_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/projectapp/templates/drfpasswordless/mtoken_email.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/base/error_messages.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/base/error_messages.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/base/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/base/exceptions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/base/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/base/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/context_processors.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/context_processors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/projectapp/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/repository.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/projectapp/services/email_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/services/email_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/projectapp/services/token_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/services/token_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/projectapp/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/services/user_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/signals.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/projectapp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,22 +44,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/FinalProject/src/projectapp/services",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "settings.editor.selected.configurable": "com.jetbrains.python.templateLanguages.PyTemplateLanguageModulesConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/FinalProject/src/projectapp/services&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.templateLanguages.PyTemplateLanguageModulesConfigurable&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\FinalProject\src\projectapp\services" />
@@ -95,6 +88,8 @@
       <workItem from="1657776055540" duration="17984000" />
       <workItem from="1657862147451" duration="12666000" />
       <workItem from="1658121080287" duration="28527000" />
+      <workItem from="1658207426694" duration="4808000" />
+      <workItem from="1658212934402" duration="2023000" />
     </task>
     <task id="LOCAL-00001" summary="blank files, folders">
       <created>1657699488957</created>
