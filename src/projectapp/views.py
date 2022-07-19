@@ -13,35 +13,35 @@ from projectapp.serializers import UserSerializer
 
 class UserAPIView(APIView):
 
-    def get_user(self, pk):
-        try:
-            return User.objects.filter(pk=pk)
-        except User.DoesNotExist:
-            raise UserDoesNotExistAPIException
-
-    def get(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_user(pk)
-        else:
-            data = User.objects.all()
-        serializer = UserSerializer(data, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        data = request.data
-        serializer = UserSerializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'User Created Successfully',
-            'data': serializer.data
-        }
-        return response
+    # def get_user(self, pk):
+    #     try:
+    #         return User.objects.filter(pk=pk)
+    #     except User.DoesNotExist:
+    #         raise UserDoesNotExistAPIException
+    #
+    # def get(self, request, pk=None, format=None):
+    #     if pk:
+    #         data = self.get_user(pk)
+    #     else:
+    #         data = User.objects.all()
+    #     serializer = UserSerializer(data, many=True)
+    #     return Response(serializer.data)
+    #
+    # def post(self, request, format=None):
+    #     data = request.data
+    #     serializer = UserSerializer(data=data)
+    #
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     serializer.save()
+    #
+    #     response = Response()
+    #
+    #     response.data = {
+    #         'message': 'User Created Successfully',
+    #         'data': serializer.data
+    #     }
+    #     return response
 
     def put(self, request, pk=None, format=None):
         user_to_update = User.objects.get(pk=pk)
@@ -60,14 +60,14 @@ class UserAPIView(APIView):
 
         return response
 
-    def delete(self, request, pk, format=None):
-        user_to_delete = User.objects.get(pk=pk)
-
-        user_to_delete.delete()
-
-        return Response({
-            'message': 'User Deleted Successfully'
-        })
+    # def delete(self, request, pk, format=None):
+    #     user_to_delete = User.objects.get(pk=pk)
+    #
+    #     user_to_delete.delete()
+    #
+    #     return Response({
+    #         'message': 'User Deleted Successfully'
+    #     })
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #
