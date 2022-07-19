@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f808ab22-9f44-4eeb-bd4b-6ccbed34e925" name="Changes" comment="blank files, folders">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/projectapp/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/apps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/projectapp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/projectapp/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

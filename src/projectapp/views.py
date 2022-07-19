@@ -60,14 +60,14 @@ class UserAPIView(APIView):
 
         return response
 
-    # def delete(self, request, pk, format=None):
-    #     user_to_delete = User.objects.get(pk=pk)
-    #
-    #     user_to_delete.delete()
-    #
-    #     return Response({
-    #         'message': 'User Deleted Successfully'
-    #     })
+    def delete(self, request, pk, format=None):
+        user_to_delete = User.objects.get(pk=pk)
+
+        user_to_delete.delete()
+
+        return Response({
+            'message': 'User Deleted Successfully'
+        })
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #
