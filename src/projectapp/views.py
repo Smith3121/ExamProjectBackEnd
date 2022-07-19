@@ -13,35 +13,35 @@ from projectapp.serializers import UserSerializer, TreatmentSerializer
 
 class UserAPIView(APIView):
 
-    def get_user(self, pk):
-        try:
-            return User.objects.filter(pk=pk)
-        except User.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_user(pk)
-        else:
-            data = User.objects.all()
-        serializer = UserSerializer(data, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        data = request.data
-        serializer = UserSerializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'User Created Successfully',
-            'data': serializer.data
-        }
-        return response
+    # def get_user(self, pk):
+    #     try:
+    #         return User.objects.filter(pk=pk)
+    #     except User.DoesNotExist:
+    #         raise Http404
+    #
+    # def get(self, request, pk=None, format=None):
+    #     if pk:
+    #         data = self.get_user(pk)
+    #     else:
+    #         data = User.objects.all()
+    #     serializer = UserSerializer(data, many=True)
+    #     return Response(serializer.data)
+    #
+    # def post(self, request, format=None):
+    #     data = request.data
+    #     serializer = UserSerializer(data=data)
+    #
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     serializer.save()
+    #
+    #     response = Response()
+    #
+    #     response.data = {
+    #         'message': 'User Created Successfully',
+    #         'data': serializer.data
+    #     }
+    #     return response
 
     def put(self, request, pk=None, format=None):
         user_to_update = User.objects.get(pk=pk)
@@ -86,49 +86,49 @@ class TreatmentAPIView(APIView):
         serializer = TreatmentSerializer(data, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
-        data = request.data
-        serializer = TreatmentSerializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Treatment created successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    def put(self, request, pk=None, format=None):
-        treatment_to_update = Treatment.objects.get(pk=pk)
-        serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data,
-                                         partial=True)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Treatment updated successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    def delete(self, request, pk, format=None):
-        treatment_to_delete = Treatment.objects.get(pk=pk)
-
-        treatment_to_delete.delete()
-
-        return Response({
-            'message': 'Treatment deleted successfully'
-        })
+    # def post(self, request, format=None):
+    #     data = request.data
+    #     serializer = TreatmentSerializer(data=data)
+    #
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     serializer.save()
+    #
+    #     response = Response()
+    #
+    #     response.data = {
+    #         'message': 'Treatment created successfully',
+    #         'data': serializer.data
+    #     }
+    #
+    #     return response
+    #
+    # def put(self, request, pk=None, format=None):
+    #     treatment_to_update = Treatment.objects.get(pk=pk)
+    #     serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data,
+    #                                      partial=True)
+    #
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     serializer.save()
+    #
+    #     response = Response()
+    #
+    #     response.data = {
+    #         'message': 'Treatment updated successfully',
+    #         'data': serializer.data
+    #     }
+    #
+    #     return response
+    #
+    # def delete(self, request, pk, format=None):
+    #     treatment_to_delete = Treatment.objects.get(pk=pk)
+    #
+    #     treatment_to_delete.delete()
+    #
+    #     return Response({
+    #         'message': 'Treatment deleted successfully'
+    #     })
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #
