@@ -121,14 +121,14 @@ class TreatmentAPIView(APIView):
     #
     #     return response
     #
-    # def delete(self, request, pk, format=None):
-    #     treatment_to_delete = Treatment.objects.get(pk=pk)
-    #
-    #     treatment_to_delete.delete()
-    #
-    #     return Response({
-    #         'message': 'Treatment deleted successfully'
-    #     })
+    def delete(self, request, pk, format=None):
+        treatment_to_delete = Treatment.objects.get(pk=pk)
+
+        treatment_to_delete.delete()
+
+        return Response({
+            'message': 'Treatment deleted successfully'
+        })
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #
