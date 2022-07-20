@@ -26,22 +26,22 @@ class UserAPIView(APIView):
             data = User.objects.all()
         serializer = UserSerializer(data, many=True)
         return Response(serializer.data)
-    #
-    # def post(self, request, format=None):
-    #     data = request.data
-    #     serializer = UserSerializer(data=data)
-    #
-    #     serializer.is_valid(raise_exception=True)
-    #
-    #     serializer.save()
-    #
-    #     response = Response()
-    #
-    #     response.data = {
-    #         'message': 'User Created Successfully',
-    #         'data': serializer.data
-    #     }
-    #     return response
+
+    def post(self, request, format=None):
+        data = request.data
+        serializer = UserSerializer(data=data)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        response = Response()
+
+        response.data = {
+            'message': 'User Created Successfully',
+            'data': serializer.data
+        }
+        return response
 
     def put(self, request, pk=None, format=None):
         user_to_update = User.objects.get(pk=pk)
