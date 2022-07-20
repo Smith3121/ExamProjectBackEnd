@@ -102,24 +102,25 @@ class TreatmentAPIView(APIView):
         }
 
         return response
-    #
-    # def put(self, request, pk=None, format=None):
-    #     treatment_to_update = Treatment.objects.get(pk=pk)
-    #     serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data,
-    #                                      partial=True)
-    #
-    #     serializer.is_valid(raise_exception=True)
-    #
-    #     serializer.save()
-    #
-    #     response = Response()
-    #
-    #     response.data = {
-    #         'message': 'Treatment updated successfully',
-    #         'data': serializer.data
-    #     }
-    #
-    #     return response
+
+    def put(self, request, pk=None, format=None):
+        treatment_to_update = Treatment.objects.get(pk=pk)
+        serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data,
+                                         partial=True)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        response = Response()
+
+        response.data = {
+            'message': 'Treatment updated successfully',
+            'data': serializer.data
+        }
+
+        return response
+
     #
     def delete(self, request, pk, format=None):
         treatment_to_delete = Treatment.objects.get(pk=pk)
