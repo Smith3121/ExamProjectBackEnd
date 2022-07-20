@@ -29,7 +29,7 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'rating', 'id')
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment','id')
 
 
 #     def is_valid(self, raise_exception=False):

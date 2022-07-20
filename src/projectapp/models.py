@@ -39,7 +39,7 @@ class Treatment(models.Model):
     pic_url = models.CharField(max_length=100)
     treatment_description = models.TextField(blank=True)
     comment = models.TextField(blank=True)
-    rating = models.IntegerField(default=0)
+    # rating = models.IntegerField(default=0)
 
     def __str__(self) -> CharField:
         return self.treatment_name
