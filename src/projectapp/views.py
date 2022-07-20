@@ -13,19 +13,19 @@ from projectapp.serializers import UserSerializer, TreatmentSerializer
 
 class UserAPIView(APIView):
 
-    # def get_user(self, pk):
-    #     try:
-    #         return User.objects.filter(pk=pk)
-    #     except User.DoesNotExist:
-    #         raise Http404
-    #
-    # def get(self, request, pk=None, format=None):
-    #     if pk:
-    #         data = self.get_user(pk)
-    #     else:
-    #         data = User.objects.all()
-    #     serializer = UserSerializer(data, many=True)
-    #     return Response(serializer.data)
+    def get_user(self, pk):
+        try:
+            return User.objects.filter(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk=None, format=None):
+        if pk:
+            data = self.get_user(pk)
+        else:
+            data = User.objects.all()
+        serializer = UserSerializer(data, many=True)
+        return Response(serializer.data)
     #
     # def post(self, request, format=None):
     #     data = request.data
