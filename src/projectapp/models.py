@@ -54,7 +54,7 @@ class Reservation(models.Model):
         DONE = 4
 
     # chosen_hour = models.DateTimeField(null=True)
-    username = models.ForeignKey(
+    user = models.ForeignKey(
         User, related_name="reservations", on_delete=models.CASCADE)
     # treatment_description = models.ForeignKey(
     #     Treatment, related_name="reservations", on_delete=models.CASCADE)
@@ -64,7 +64,7 @@ class Reservation(models.Model):
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
 
     def __str__(self) -> User.username:
-        return str(self.username)
+        return str(self.user)
 
 # class TokenRequest(TimeStampedModel):
 #     user_id = models.UUIDField(db_column='userId', default=None, null=True, blank=True)

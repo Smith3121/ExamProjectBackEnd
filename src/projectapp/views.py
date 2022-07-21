@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleAPIException, DomainIsNotEligibleException
 from projectapp.models import User, Treatment, Reservation
-from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer
+from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, \
+    ReservationDepthSerializer
 
 
 class UserAPIView(APIView):
@@ -145,7 +146,7 @@ class ReservationAPIView(APIView):
             data = self.get_reservation(pk)
         else:
             data = Reservation.objects.all()
-        serializer = ReservationSerializer(data, many=True)
+        serializer = ReservationDepthSerializer(data, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):

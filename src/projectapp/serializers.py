@@ -11,6 +11,7 @@ from projectapp.models import User, Treatment, Reservation
 
 
 class UserSerializer(serializers.ModelSerializer):
+    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -21,8 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-                  'presentation', 'pic_url']
+        # fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
+        #           'presentation', 'pic_url', 'reservations']
+        fields = '__all__'
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
@@ -34,7 +36,15 @@ class TreatmentSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ('username', 'reservation_status', 'id')
+        fields = '__all__'
+        # depth = 1
+
+
+class ReservationDepthSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = '__all__'
+        depth = 1
 
 #     def is_valid(self, raise_exception=False):
 #         try:
