@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework import routers
 from . import views
-from .views import UserAPIView, TreatmentAPIView
+from .views import UserAPIView, TreatmentAPIView, ReservationAPIView
 
 urlpatterns = [
     path('user', UserAPIView.as_view()),
@@ -9,4 +9,7 @@ urlpatterns = [
 
     path('treatment', TreatmentAPIView.as_view()),
     path('treatment/<str:pk>', TreatmentAPIView.as_view()),  # to capture our ids
+
+    path('reservation', ReservationAPIView.as_view()),
+    path('reservation/<str:pk>', ReservationAPIView.as_view()),  # to capture our ids
 ]

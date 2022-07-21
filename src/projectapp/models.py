@@ -1,7 +1,7 @@
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import CharField
+from django.db.models import CharField, ForeignKey
 
 from base.models import TimeStampedModel
 
@@ -39,10 +39,32 @@ class Treatment(models.Model):
     pic_url = models.CharField(max_length=100)
     treatment_description = models.TextField(blank=True)
     comment = models.TextField(blank=True)
+
     # rating = models.IntegerField(default=0)
 
     def __str__(self) -> CharField:
         return self.treatment_name
+
+
+class Reservation(models.Model):
+    class ReservationStatus(models.IntegerChoices):
+        CREATED = 1
+        ACCEPTED = 2
+        REFUSED = 3
+        DONE = 4
+
+    # chosen_hour = models.DateTimeField(null=True)
+    username = models.ForeignKey(
+        User, related_name="reservations", on_delete=models.CASCADE)
+    # treatment_description = models.ForeignKey(
+    #     Treatment, related_name="reservations", on_delete=models.CASCADE)
+    # problem_description = models.TextField(blank=True, null=True, default=' ')
+    # doctor = models.ForeignKey(
+    #     User, related_name="reservations", on_delete=models.CASCADE)
+    reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
+
+    def __str__(self) -> User.username:
+        return str(self.username)
 
 # class TokenRequest(TimeStampedModel):
 #     user_id = models.UUIDField(db_column='userId', default=None, null=True, blank=True)

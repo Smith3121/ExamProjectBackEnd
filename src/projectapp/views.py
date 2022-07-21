@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleAPIException, DomainIsNotEligibleException
-from projectapp.models import User, Treatment
-from projectapp.serializers import UserSerializer, TreatmentSerializer
+from projectapp.models import User, Treatment, Reservation
+from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer
 
 
 class UserAPIView(APIView):
@@ -129,6 +129,66 @@ class TreatmentAPIView(APIView):
 
         return Response({
             'message': 'Treatment deleted successfully'
+        })
+
+
+class ReservationAPIView(APIView):
+
+    def get_reservation(self, pk):
+        try:
+            return Reservation.objects.filter(pk=pk)
+        except Reservation.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk=None, format=None):
+        if pk:
+            data = self.get_reservation(pk)
+        else:
+            data = Reservation.objects.all()
+        serializer = ReservationSerializer(data, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        data = request.data
+        serializer = ReservationSerializer(data=data)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        response = Response()
+
+        response.data = {
+            'message': 'Reservation Created Successfully',
+            'data': serializer.data
+        }
+
+        return response
+
+    def put(self, request, pk=None, format=None):
+        reservation_to_update = Reservation.objects.get(pk=pk)
+        serializer = ReservationSerializer(instance=reservation_to_update, data=request.data, partial=True)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        response = Response()
+
+        response.data = {
+            'message': 'Reservation Updated Successfully',
+            'data': serializer.data
+        }
+
+        return response
+
+    def delete(self, request, pk, format=None):
+        reservation_to_delete = Reservation.objects.get(pk=pk)
+
+        reservation_to_delete.delete()
+
+        return Response({
+            'message': 'Reservation Deleted Successfully'
         })
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
