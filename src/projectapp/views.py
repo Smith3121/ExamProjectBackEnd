@@ -1,3 +1,4 @@
+import views as views
 from django.http import Http404
 from rest_framework import viewsets, status
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, DestroyModelMixin, UpdateModelMixin, \
@@ -7,9 +8,10 @@ from rest_framework.views import APIView
 
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleAPIException, DomainIsNotEligibleException
-from projectapp.models import User, Treatment\
+from projectapp import models
+from projectapp.models import User, Treatment \
     , Reservation
-from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer
+from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer
 
 
 class UserAPIView(APIView):
@@ -193,8 +195,12 @@ class ReservationAPIView(APIView):
         })
 
 
+class DoctorAPIView(APIView):
 
-
+    def get(self, Usertype):
+        data = User.objects.filter(user_type=3)
+        serializer = DoctorSerializer(data, many=True)
+        return Response(serializer.data)
 
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #

@@ -1,18 +1,29 @@
+import django_filters
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import EmailField
+from rest_framework.serializers import EmailField, CharField
 from rest_framework.validators import UniqueValidator
 
 # from base.error_messages import ErrorMessage
 # from base.exceptions import EmailAlreadyExists, FormInvalid
 # from projectapp.models import User, TokenRequest
 # from projectapp.services.user_service import UserService
-from projectapp.models import User, Treatment\
+from projectapp.models import User, Treatment \
     , Reservation
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # doctor_choice_reservation = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username']
 
 
 class UserSerializer(serializers.ModelSerializer):
     reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # doctor_choice_reservation = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -20,6 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
+
 
     class Meta:
         model = User
@@ -41,7 +53,6 @@ class ReservationSerializer(serializers.ModelSerializer):
         model = Reservation
         fields = '__all__'
         # depth = 1
-
 
 # class ReservationDepthSerializer(serializers.ModelSerializer):
 #     class Meta:
