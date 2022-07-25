@@ -57,9 +57,9 @@ class Reservation(models.Model):
     user = models.ForeignKey(
         User, related_name="reservations", on_delete=models.CASCADE)
     treatment = models.ForeignKey(
-        Treatment, related_name="reservations", on_delete=models.CASCADE)
+        Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
 #     # problem_description = models.TextField(blank=True, null=True, default=' ')
-
+    medicla_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
 
     def __str__(self) -> User.username:
