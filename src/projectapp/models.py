@@ -53,7 +53,6 @@ class Reservation(models.Model):
         REFUSED = 3
         DONE = 4
 
-    #
     #     # chosen_hour = models.DateTimeField(null=True)
     user = models.ForeignKey(
         User, related_name="reservations", on_delete=models.CASCADE)

@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='reservation',
-            name='medicla_note',
+            name='medical_note',
             field=models.TextField(blank=True, default=' ', null=True),
         ),
     ]
