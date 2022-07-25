@@ -7,7 +7,8 @@ from rest_framework.validators import UniqueValidator
 # from base.exceptions import EmailAlreadyExists, FormInvalid
 # from projectapp.models import User, TokenRequest
 # from projectapp.services.user_service import UserService
-from projectapp.models import User, Treatment, Reservation
+from projectapp.models import User, Treatment\
+    , Reservation
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,15 +23,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-        #           'presentation', 'pic_url', 'reservations']
-        fields = '__all__'
+        fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
+                  'presentation', 'pic_url', 'reservations']
+        # fields = '__all__'
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
+    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id')
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', 'reservations')
 
 
 class ReservationSerializer(serializers.ModelSerializer):
@@ -40,11 +43,11 @@ class ReservationSerializer(serializers.ModelSerializer):
         # depth = 1
 
 
-class ReservationDepthSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reservation
-        fields = '__all__'
-        depth = 1
+# class ReservationDepthSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Reservation
+#         fields = '__all__'
+#         depth = 1
 
 #     def is_valid(self, raise_exception=False):
 #         try:

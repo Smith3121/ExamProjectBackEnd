@@ -7,9 +7,9 @@ from rest_framework.views import APIView
 
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleAPIException, DomainIsNotEligibleException
-from projectapp.models import User, Treatment, Reservation
-from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, \
-    ReservationDepthSerializer
+from projectapp.models import User, Treatment\
+    , Reservation
+from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer
 
 
 class UserAPIView(APIView):
@@ -146,7 +146,7 @@ class ReservationAPIView(APIView):
             data = self.get_reservation(pk)
         else:
             data = Reservation.objects.all()
-        serializer = ReservationDepthSerializer(data, many=True)
+        serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -192,6 +192,10 @@ class ReservationAPIView(APIView):
             'message': 'Reservation Deleted Successfully'
         })
 
+
+
+
+
 # class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #
 #     serializer_class = TokenRequestSerializer
@@ -217,7 +221,7 @@ class ReservationAPIView(APIView):
 #         headers = self.get_success_headers(serializer.data)
 #
 #         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-#
+
 
 # class MTokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
 #
