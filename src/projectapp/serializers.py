@@ -18,12 +18,12 @@ class DoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username']
+        fields = ['username', 'id']
 
 
 class UserSerializer(serializers.ModelSerializer):
     reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # doctor_choice_reservation = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -32,11 +32,10 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
-
     class Meta:
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-                  'presentation', 'pic_url', 'reservations']
+                  'presentation', 'pic_url', 'reservations', 'doctor']
         # fields = '__all__'
 
 
@@ -49,6 +48,9 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
+    # doctor = serializers.CharField(source=User.Usertype == 3)
+    # User.doctor = User.objects.filter(user_type=3)
+
     class Meta:
         model = Reservation
         fields = '__all__'
@@ -60,71 +62,3 @@ class ReservationSerializer(serializers.ModelSerializer):
 #         fields = '__all__'
 #         depth = 1
 
-#     def is_valid(self, raise_exception=False):
-#         try:
-#             super(UserSerializer, self).is_valid(raise_exception)
-#
-#         except ValidationError as e:
-#             email_error = e.detail.get('email')
-#
-#             if email_error:
-#                 if email_error[0].code == 'unique':
-#                     raise EmailAlreadyExists(ErrorMessage.email_already_exists())
-#                 elif email_error[0].code == 'invalid':
-#                     raise FormInvalid(ErrorMessage.email_is_invalid())
-#
-#             raise e
-#
-#
-# class TokenRequestSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = TokenRequest
-#         fields = ['email', 'mtoken', 'userId']
-#         extra_kwargs = {
-#             'userId': {'source': 'user_id'},
-#         }
-#
-#     def validate(self, attrs):
-#         result = super(TokenRequestSerializer, self).validate(attrs)
-#         if result.get('email', None) is None and result.get('user_id', None) is None:
-#             # TODO: raise the proper exception
-#             raise ValidationError('This Field Is Required.')
-#         return result
-#
-#     def is_valid(self, raise_exception=False):
-#         super(TokenRequestSerializer, self).is_valid(raise_exception)
-#
-#
-# class TokenResponseSerializer(serializers.Serializer):
-#     token = serializers.CharField(source='token.key')
-#     user = UserSerializer(read_only=True)
-#
-#     class Meta:
-#         fields = ['token', 'user']
-#
-#
-# class MTokenRequestSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = TokenRequest
-#         fields = ['email']
-#
-#     def is_valid(self, raise_exception=False):
-#         try:
-#             serializer = super(MTokenRequestSerializer, self)
-#             serializer.is_valid(raise_exception)
-#
-#             UserService.get_by_email(serializer.validated_data['email'], raise_exception=True)
-#         except ValidationError as e:
-#             email_error = e.detail.get('email')
-#
-#             if email_error and email_error[0].code == 'invalid':
-#                 raise FormInvalid(ErrorMessage.email_is_invalid())
-#
-#             raise e
-#
-#
-# class MTokenResponseSerializer(serializers.Serializer):
-#     user = UserSerializer(read_only=True)
-#
-#     class Meta:
-#         fields = ['user']

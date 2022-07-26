@@ -54,17 +54,12 @@ class Reservation(models.Model):
         DONE = 4
 
     #     # chosen_hour = models.DateTimeField(null=True)
-    user = models.ForeignKey(
-        User, related_name="reservations", on_delete=models.CASCADE)
-    treatment = models.ForeignKey(
-        Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
+    user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE)
+    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
+    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE)
     #     # problem_description = models.TextField(blank=True, null=True, default=' ')
     medical_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
-    # doctor = models.ForeignKey(User, related_name='doctorlist', on_delete=models.CASCADE, default='')
-
-        # models.ForeignKey(
-        # User, related_name="doctorchoicereservation", on_delete=models.CASCADE, default='')
 
     def __str__(self) -> User.username:
         return str(self.user)
