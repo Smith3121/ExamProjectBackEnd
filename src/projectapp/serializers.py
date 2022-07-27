@@ -1,7 +1,6 @@
-import django_filters
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import EmailField, CharField
+from rest_framework import serializers
+from rest_framework.serializers import EmailField
 from rest_framework.validators import UniqueValidator
 
 # from base.error_messages import ErrorMessage
@@ -13,9 +12,6 @@ from projectapp.models import User, Treatment \
 
 
 class DoctorSerializer(serializers.ModelSerializer):
-    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # doctor_choice_reservation = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
     class Meta:
         model = User
         fields = ['username', 'id']
@@ -48,9 +44,6 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    # doctor = serializers.CharField(source=User.Usertype == 3)
-    # User.doctor = User.objects.filter(user_type=3)
-
     class Meta:
         model = Reservation
         fields = '__all__'
@@ -61,4 +54,3 @@ class ReservationSerializer(serializers.ModelSerializer):
 #         model = Reservation
 #         fields = '__all__'
 #         depth = 1
-
