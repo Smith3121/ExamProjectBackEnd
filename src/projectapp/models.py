@@ -26,6 +26,7 @@ class User(AbstractUser):
     gender = models.IntegerField(choices=Gender.choices, default=1)
     number = models.CharField(max_length=30)
     date_of_birth = models.DateTimeField(null=True)
+    specialisation = models.CharField(default='', max_length=65)
 
     presentation = models.TextField(blank=True)
     pic_url = models.CharField(max_length=100)
