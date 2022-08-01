@@ -58,7 +58,7 @@ class Reservation(models.Model):
     treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
     medical_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
+    doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE)
 
     def __str__(self) -> User.username:
         return str(self.user)
-
