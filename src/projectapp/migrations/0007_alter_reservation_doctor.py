@@ -12,9 +12,33 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.RemoveField(
             model_name='reservation',
             name='doctor',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='doctor', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.RemoveField(
+            model_name='user',
+            name='email_verified',
+        ),
+        migrations.AlterField(
+            model_name='treatment',
+            name='pic_url',
+            field=models.CharField(max_length=1000),
+        ),
+        migrations.AlterField(
+            model_name='user',
+            name='pic_url',
+            field=models.CharField(max_length=1000),
+        ),
+        migrations.AddField(
+            model_name='treatment',
+            name='doctor',
+            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='doctor',
+                                    to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='email_verified',
+            field=models.BooleanField(db_column='emailVerified', default=False),
         ),
     ]

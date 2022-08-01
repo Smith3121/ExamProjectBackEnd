@@ -36,11 +36,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
-    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', 'reservations')
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'doctor', 'id')
 
 
 class ReservationSerializer(serializers.ModelSerializer):

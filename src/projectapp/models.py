@@ -18,17 +18,17 @@ class User(AbstractUser):
         OTHER = 3
 
     REQUIRED_FIELDS = []
-
+    email_verified = models.BooleanField(db_column='emailVerified', default=False)
     # username = models.CharField(max_length=50)
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    email_verified = models.BooleanField(db_column='emailVerified', default=False)
     user_type = models.IntegerField(choices=Usertype.choices, blank=True, default=2)
     gender = models.IntegerField(choices=Gender.choices, default=1)
     number = models.CharField(max_length=30)
     date_of_birth = models.DateTimeField(null=True)
+    specialisation = models.CharField(max_length=120, default='')
 
     presentation = models.TextField(blank=True)
-    pic_url = models.CharField(max_length=100)
+    pic_url = models.CharField(max_length=1000)
 
     def __str__(self) -> str:
         return self.username
@@ -36,9 +36,10 @@ class User(AbstractUser):
 
 class Treatment(models.Model):
     treatment_name = models.CharField(max_length=100)
-    pic_url = models.CharField(max_length=100)
+    pic_url = models.CharField(max_length=1000)
     treatment_description = models.TextField(blank=True)
     comment = models.TextField(blank=True)
+    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE, default='')
 
     # rating = models.IntegerField(default=0)
 
@@ -53,13 +54,11 @@ class Reservation(models.Model):
         REFUSED = 3
         DONE = 4
 
-    #     # chosen_hour = models.DateTimeField(null=True)
     user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE)
     treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
-    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE)
-    #     # problem_description = models.TextField(blank=True, null=True, default=' ')
     medical_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
 
     def __str__(self) -> User.username:
         return str(self.user)
+
