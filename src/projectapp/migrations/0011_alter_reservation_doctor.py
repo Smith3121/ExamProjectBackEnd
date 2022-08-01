@@ -17,4 +17,18 @@ class Migration(migrations.Migration):
             name='doctor',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='resdoctor', to=settings.AUTH_USER_MODEL),
         ),
+        migrations.CreateModel(
+            name='Date',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('date', models.CharField(max_length=1000)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Hour',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('hour', models.CharField(max_length=1000)),
+            ],
+        ),
     ]

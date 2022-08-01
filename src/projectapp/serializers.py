@@ -8,7 +8,19 @@ from rest_framework.validators import UniqueValidator
 # from projectapp.models import User, TokenRequest
 # from projectapp.services.user_service import UserService
 from projectapp.models import User, Treatment \
-    , Reservation
+    , Reservation, Date, Hour
+
+
+class HourSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hour
+        fields = '__all__'
+
+
+class DateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Date
+        fields = '__all__'
 
 
 class DoctorSerializer(serializers.ModelSerializer):
