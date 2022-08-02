@@ -23,13 +23,13 @@ class User(AbstractUser):
     # username = models.CharField(max_length=50)
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user_type = models.IntegerField(choices=Usertype.choices, blank=True, default=2)
-    gender = models.IntegerField(choices=Gender.choices, default=1)
+    gender = models.IntegerField(choices=Gender.choices, default=1 )
     number = models.CharField(max_length=30)
-    date_of_birth = models.DateTimeField(null=True)
-    specialisation = models.CharField(max_length=120, default='')
+    date_of_birth = models.DateTimeField(null=True,  blank=True)
+    specialisation = models.CharField(max_length=120, default='',  blank=True)
 
     presentation = models.TextField(blank=True)
-    pic_url = models.CharField(max_length=1000)
+    pic_url = models.CharField(max_length=1000,  blank=True)
 
     def __str__(self) -> str:
         return self.username

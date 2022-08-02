@@ -69,6 +69,23 @@ class UserAPIView(APIView):
         })
 
 
+class RemoveDocDescrAPIView(APIView):
+
+    def put(self, request, pk=None, format=None):
+        user_to_update = User.objects.get(pk=pk)
+        serializer = UserSerializer(instance=user_to_update, data={'presentation': ""}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+
+        response = Response()
+
+        response.data = {
+            'message': 'User Updated Successfully',
+            'data': serializer.data
+        }
+        return response
+
+
 class TreatmentAPIView(APIView):
 
     def get_treatment(self, pk):
