@@ -86,6 +86,13 @@ class RemoveDocDescrAPIView(APIView):
         return response
 
 
+class ListUserResAPIView(APIView):
+    def get(self, request, pk=None, format=None):
+        data = Reservation.objects.filter(user=pk)
+        serializer = ReservationSerializer(data, many=True)
+        return Response(serializer.data)
+
+
 class TreatmentAPIView(APIView):
 
     def get_treatment(self, pk):
