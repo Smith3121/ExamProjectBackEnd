@@ -1,3 +1,4 @@
+from Tools.scripts.make_ctype import values
 from django.db.models import DateTimeField
 from django.http import Http404
 from django.utils.functional import SimpleLazyObject
@@ -89,6 +90,13 @@ class RemoveDocDescrAPIView(APIView):
 class ListUserResAPIView(APIView):
     def get(self, request, pk=None, format=None):
         data = Reservation.objects.filter(user=pk)
+        serializer = ReservationSerializer(data, many=True)
+        return Response(serializer.data)
+
+
+class DocPatResAPIView(APIView):
+    def get(self, request, pk=None, format=None):
+        data = Reservation.objects.filter(doctor=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 

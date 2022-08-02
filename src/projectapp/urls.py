@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework import routers
 from . import views
 from .views import UserAPIView, TreatmentAPIView, ReservationAPIView, DoctorAPIView, DateAPIView, RemoveDocDescrAPIView, \
-    ListUserResAPIView
+    ListUserResAPIView, DocPatResAPIView
 
 urlpatterns = [
     path('api/user', UserAPIView.as_view()),
@@ -25,5 +25,7 @@ urlpatterns = [
     path('docdescrem/<str:pk>', RemoveDocDescrAPIView.as_view()),  # to capture our ids
 
     path('listuserres/<str:pk>', ListUserResAPIView.as_view()),  # to capture our ids
+
+    path('docpatres/<str:pk>', DocPatResAPIView.as_view()),  # to capture our ids
 
 ]
