@@ -31,4 +31,29 @@ class Migration(migrations.Migration):
                 ('hour', models.CharField(max_length=1000)),
             ],
         ),
+        migrations.AddField(
+            model_name='reservation',
+            name='date',
+            field=models.OneToOneField(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='resdate',
+                                       to='projectapp.date'),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='reservation',
+            name='hour',
+            field=models.OneToOneField(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='hours',
+                                       to='projectapp.hour'),
+        ),
+        migrations.AlterField(
+            model_name='reservation',
+            name='date',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='resdate',
+                                    to='projectapp.date'),
+        ),
+        migrations.AlterField(
+            model_name='reservation',
+            name='hour',
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='hours',
+                                    to='projectapp.hour'),
+        ),
     ]

@@ -6,26 +6,6 @@ from django.db import models
 from django.db.models import CharField, ForeignKey, DateTimeField
 from django.utils.timezone import now
 
-from base.models import TimeStampedModel
-
-
-# class DateTruncMixin:
-#
-#     def truncate_date(self, dt):
-#         return dt
-#
-#     def to_python(self, value):
-#         value = super().to_python(value)
-#         if value is not None:
-#             return self.truncate_date(value)
-#         return value
-#
-#
-# class MinuteDateTimeField(DateTruncMixin, DateTimeField):
-#
-#     def truncate_date(self, dt):
-#         return dt.replace(second=0, microsecond=0, minutes=0)
-
 
 class User(AbstractUser):
     class Usertype(models.IntegerChoices):
@@ -77,6 +57,7 @@ class Hour(models.Model):
 
 class Date(models.Model):
     date = models.CharField(max_length=1000)
+
     # hour = models.CharField(max_length=1000)
 
     def __str__(self) -> str:
@@ -95,11 +76,11 @@ class Reservation(models.Model):
     medical_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
     doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE)
-    date = models.OneToOneField(Date, related_name='resdate', on_delete=models.CASCADE)
-    hour = models.OneToOneField(Hour, related_name='hours', on_delete=models.CASCADE, default=1)
+    date = models.ForeignKey(Date, related_name='resdate', on_delete=models.CASCADE)
+    hour = models.ForeignKey(Hour, related_name='hours', on_delete=models.CASCADE, default=1)
 
     class Meta:
-        unique_together = ('date', 'hour')
+        unique_together = ('doctor', 'date', 'hour')
 
     def __str__(self) -> User.username:
         return str(self.user)
