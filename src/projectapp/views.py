@@ -96,7 +96,14 @@ class ListUserResAPIView(APIView):
 
 class DocPatResAPIView(APIView):
     def get(self, request, pk=None, format=None):
-        data = Reservation.objects.filter(doctor=pk).order_by()
+        data = Reservation.objects.filter(doctor=pk)
+        serializer = ReservationSerializer(data, many=True)
+        return Response(serializer.data)
+
+
+class DocListResByDateAPIView(APIView):
+    def get(self, request, pk=None, format=None):
+        data = Reservation.objects.filter(doctor=pk).order_by('date__date', 'hour__hour')
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
