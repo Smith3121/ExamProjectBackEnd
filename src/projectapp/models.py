@@ -1,35 +1,57 @@
 import uuid
 from datetime import datetime
+from django.apps import apps
+from django.contrib import auth
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.hashers import make_password
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
+from django.db import models
+from django.db.models.manager import EmptyManager
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
+
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.db.models import CharField, ForeignKey, DateTimeField
 from django.utils.timezone import now
 
 
 class User(AbstractUser):
-    class Usertype(models.IntegerChoices):
-        ADMIN = 1
-        USER = 2
-        DOCTOR = 3
+    class Usertype(models.TextChoices):
+        ADMIN = "ADMIN"
+        USER = "USER"
+        DOCTOR = "DOCTOR"
 
-    class Gender(models.IntegerChoices):
-        MAN = 1
-        WOMAN = 2
-        OTHER = 3
+    class Gender(models.TextChoices):
+        MAN = "MAN"
+        WOMAN = "WOMAN"
+        OTHER = "OTHER"
 
     REQUIRED_FIELDS = []
     email_verified = models.BooleanField(db_column='emailVerified', default=False)
-    # username = models.CharField(max_length=50)
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    user_type = models.IntegerField(choices=Usertype.choices, blank=True, default=2)
-    gender = models.IntegerField(choices=Gender.choices, default=1 )
+    user_type = models.CharField(choices=Usertype.choices, blank=True, default='', max_length=100)
+    gender = models.CharField(choices=Gender.choices, default='', max_length=100)
     number = models.CharField(max_length=30)
-    date_of_birth = models.DateTimeField(null=True,  blank=True)
-    specialisation = models.CharField(max_length=120, default='',  blank=True)
+    date_of_birth = models.DateTimeField(null=True, blank=True)
+    specialisation = models.CharField(max_length=120, default='', blank=True)
 
     presentation = models.TextField(blank=True)
-    pic_url = models.CharField(max_length=1000,  blank=True)
+    pic_url = models.CharField(max_length=1000, blank=True)
 
     def __str__(self) -> str:
         return self.username

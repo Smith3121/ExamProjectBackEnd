@@ -60,7 +60,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = '__all__'
-        # depth = 1
+        depth = 1
 
 # class ReservationDepthSerializer(serializers.ModelSerializer):
 #     class Meta:
