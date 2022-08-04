@@ -12,8 +12,6 @@ from django.db.models.manager import EmptyManager
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-
-
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
@@ -38,7 +36,6 @@ class User(AbstractUser):
         _('username'),
         max_length=150,
         unique=True,
-        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
         error_messages={
             'unique': _("A user with that username already exists."),
         },
@@ -58,11 +55,11 @@ class User(AbstractUser):
 
 
 class Treatment(models.Model):
-    treatment_name = models.CharField(max_length=100)
+    treatment_name = models.CharField(max_length=100, unique=True)
     pic_url = models.CharField(max_length=1000)
     treatment_description = models.TextField(blank=True)
     comment = models.TextField(blank=True)
-    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE, default='')
+    doctor = models.ForeignKey(User, related_name='treatment', on_delete=models.CASCADE, default='', to_field='username')
 
     # rating = models.IntegerField(default=0)
 
@@ -70,17 +67,8 @@ class Treatment(models.Model):
         return self.treatment_name
 
 
-class Hour(models.Model):
-    hour = models.CharField(max_length=1000)
-
-    def __str__(self) -> str:
-        return str(self.hour)
-
-
-class Date(models.Model):
-    date = models.CharField(max_length=1000)
-
-    # hour = models.CharField(max_length=1000)
+class Dates(models.Model):
+    date = models.DateTimeField(unique=True, default="")
 
     def __str__(self) -> str:
         return str(self.date)
@@ -93,16 +81,15 @@ class Reservation(models.Model):
         REFUSED = 3
         DONE = 4
 
-    user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE)
-    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
+    user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE, to_field='username')
+    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='', to_field='treatment_name')
     medical_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
-    doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE)
-    date = models.ForeignKey(Date, related_name='resdate', on_delete=models.CASCADE)
-    hour = models.ForeignKey(Hour, related_name='hours', on_delete=models.CASCADE, default=1)
+    doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE, to_field='username')
+    date = models.ForeignKey(Dates, related_name='resdate', on_delete=models.CASCADE, to_field='date', default="")
 
     class Meta:
-        unique_together = ('doctor', 'date', 'hour')
+        unique_together = ('doctor', 'date',)
 
     def __str__(self) -> User.username:
         return str(self.user)

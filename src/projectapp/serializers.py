@@ -8,30 +8,24 @@ from rest_framework.validators import UniqueValidator
 # from projectapp.models import User, TokenRequest
 # from projectapp.services.user_service import UserService
 from projectapp.models import User, Treatment \
-    , Reservation, Date, Hour
-
-
-class HourSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hour
-        fields = '__all__'
+    , Reservation, Dates
 
 
 class DateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Date
+        model = Dates
         fields = '__all__'
 
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'id']
+        fields = ['username', 'id', 'treatment']
 
 
 class UserSerializer(serializers.ModelSerializer):
     reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -43,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-                  'presentation', 'pic_url', 'reservations', 'doctor', 'specialisation']
+                  'presentation', 'pic_url', 'reservations', 'treatment', 'specialisation']
         # fields = '__all__'
 
 
@@ -60,7 +54,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = '__all__'
-        depth = 1
+        # depth = 1
 
 # class ReservationDepthSerializer(serializers.ModelSerializer):
 #     class Meta:

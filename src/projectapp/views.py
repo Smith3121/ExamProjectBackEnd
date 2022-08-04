@@ -4,11 +4,12 @@ from django.http import Http404
 from django.utils.functional import SimpleLazyObject
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime
 
 from projectapp.models import User, Treatment \
-    , Reservation, Date, Hour
+    , Reservation, Dates
 from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
-    DateSerializer, HourSerializer
+    DateSerializer
 
 
 class UserAPIView(APIView):
@@ -103,7 +104,7 @@ class DocPatResAPIView(APIView):
 
 class DocListResByDateAPIView(APIView):
     def get(self, request, pk=None, format=None):
-        data = Reservation.objects.filter(doctor=pk).order_by('date__date', 'hour__hour')
+        data = Reservation.objects.filter(doctor=pk).order_by('date__date')
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
@@ -242,20 +243,29 @@ class DateAPIView(APIView):
 
     def get_date(self, pk):
         try:
-            return Date.objects.filter(pk=pk)
-        except Date.DoesNotExist:
+            data = Dates.objects.filter(pk=pk)
+            # date = datetime.strptime(data,"%Y-%b-%d")
+            # time = datetime.strptime(data,"%H")
+            # return date, time
+            return data
+        except Dates.DoesNotExist:
             raise Http404
 
     def get(self, request, pk=None, format=None):
+        # I need to break the datetime object that i get from DB into a date and a time object then send them to frontend
         if pk:
             data = self.get_date(pk)
         else:
-            data = Date.objects.all()
+            data = Dates.objects.all()
         serializer = DateSerializer(data, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         data = request.data
+
+        # I need to receive 2 object, a date and a time object, then combine them and save them
+        # dataToString = data.strftime("%Y-%m-%d %H:00:00.000000")
+
         serializer = DateSerializer(data=data)
 
         serializer.is_valid(raise_exception=True)
@@ -271,7 +281,7 @@ class DateAPIView(APIView):
         return response
 
     def put(self, request, pk=None, format=None):
-        date_to_update = Date.objects.get(pk=pk)
+        date_to_update = Dates.objects.get(pk=pk)
         serializer = DateSerializer(instance=date_to_update, data=request.data, partial=True)
 
         serializer.is_valid(raise_exception=True)
@@ -288,73 +298,10 @@ class DateAPIView(APIView):
         return response
 
     def delete(self, request, pk, format=None):
-        date_to_delete = Date.objects.get(pk=pk)
+        date_to_delete = Dates.objects.get(pk=pk)
 
         date_to_delete.delete()
 
         return Response({
             'message': 'Date Deleted Successfully'
         })
-
-
-class HourAPIView(APIView):
-
-    def get_hour(self, pk):
-        try:
-            return Hour.objects.filter(pk=pk)
-        except Hour.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_hour(pk)
-        else:
-            data = Hour.objects.all()
-        serializer = HourSerializer(data, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        data = request.data
-        serializer = HourSerializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Hour Created Successfully',
-            'data': serializer.data
-        }
-        return response
-
-    def put(self, request, pk=None, format=None):
-        hour_to_update = Hour.objects.get(pk=pk)
-        serializer = HourSerializer(instance=hour_to_update, data=request.data, partial=True)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Hour Updated Successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    def delete(self, request, pk, format=None):
-        hour_to_delete = Hour.objects.get(pk=pk)
-
-        hour_to_delete.delete()
-
-        return Response({
-            'message': 'Hour Deleted Successfully'
-        })
-
-# class DoctorsOfTheTreatmentAPIView(APIView):
-#     data = User.objects.filter(user_type=3)
-#
