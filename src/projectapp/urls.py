@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('api/doctorlist', DoctorAPIView.as_view()),
 
-    path('docdescrem/<str:pk>', RemoveDocDescrAPIView.as_view()),  # to capture our ids
+    path('docdescriptrem/<str:pk>', RemoveDocDescrAPIView.as_view()),  # to capture our ids
 
     path('listuserres/<str:pk>', ListUserResAPIView.as_view()),  # to capture our ids
 
