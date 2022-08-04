@@ -234,7 +234,7 @@ class ReservationAPIView(APIView):
 class DoctorAPIView(APIView):
 
     def get(self, usertype):
-        data = User.objects.filter(user_type=3)
+        data = User.objects.filter(user_type="DOCTOR")
         serializer = DoctorSerializer(data, many=True)
         return Response(serializer.data)
 
