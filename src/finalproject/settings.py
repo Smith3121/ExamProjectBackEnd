@@ -152,7 +152,7 @@ AUTH_USER_MODEL = 'projectapp.User'
 PASSWORDLESS_AUTH = {
     'PASSWORDLESS_AUTH_TYPES': ['EMAIL'],
     'PASSWORDLESS_USER_MARK_EMAIL_VERIFIED': True,
-    'PASSWORDLESS_EMAIL_NOREPLY_ADDRESS': 'hhands@gmail.com',
+    'PASSWORDLESS_EMAIL_NOREPLY_ADDRESS': 'ioni_dan@yahoo.com',
     'PASSWORDLESS_EMAIL_SUBJECT': "Your Verification Token",
     'PASSWORDLESS_EMAIL_TOKEN_HTML_TEMPLATE_NAME': "drfpasswordless/mtoken_email.html",
     'PASSWORDLESS_AUTH_TOKEN_SERIALIZER': 'drfpasswordless.serializers.TokenResponseSerializer',
@@ -164,10 +164,10 @@ PASSWORDLESS_AUTH = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'ioni_dan@yahoo.com'
 EMAIL_PORT = '465'
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'hhands@gmail.com'
+EMAIL_HOST_USER = 'ioni_dan@yahoo.com'
 EMAIL_HOST_PASSWORD = '3GD-YQo-FXK-upn'
 
 APP_SETTINGS = {

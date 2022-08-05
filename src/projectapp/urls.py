@@ -1,31 +1,24 @@
 from django.urls import path
 from rest_framework import routers
 from . import views
-from .views import UserAPIView, TreatmentAPIView, ReservationAPIView, DoctorAPIView, DateAPIView, RemoveDocDescrAPIView, \
-    ListUserResAPIView, DocPatResAPIView, DocListResByDateAPIView
+from .views import UserViewSet, TreatmentViewSet, ReservationViewSet
 
-urlpatterns = [
-    path('api/user', UserAPIView.as_view()),
-    path('api/user/<str:pk>', UserAPIView.as_view()),  # to capture our ids
+router = routers.SimpleRouter(trailing_slash=False)
 
-    path('api/treatment', TreatmentAPIView.as_view()),
-    path('api/treatment/<str:pk>', TreatmentAPIView.as_view()),  # to capture our ids
+router.register('user', views.UserViewSet, basename='user')
+router.register('user/<str:pk>', views.UserViewSet, basename='user')
+router.register('token', views.TokenViewSet, basename='user')
+router.register('mtoken', views.MTokenViewSet, basename='user')
+router.register('treatment', views.TreatmentViewSet, basename='treatment')
+router.register('treatment/<str:pk>', views.TreatmentViewSet, basename='treatment')
+router.register('reservation', views.ReservationViewSet, basename='reservation')
+router.register('reservation/<str:pk>', views.ReservationViewSet, basename='reservation')
+router.register('date', views.DateViewSet, basename='date')
+router.register('date/<str:pk>', views.DateViewSet, basename='date')
+router.register('doctorlist', views.DoctorViewSet, basename='doctorlist')
+router.register('docdescriptrem/<str:pk>', views.RemoveDocDescrViewSet, basename='removedocdescr')
+router.register('listuserres/<str:pk>', views.ListUserResViewSet, basename='listuserres')
+router.register('docpatres/<str:pk>', views.DocPatResViewSet, basename='docpatres')
+router.register('doclistresbydate/<str:pk>', views.DocListResByDateViewSet, basename='doclistresbydate')
 
-    path('api/reservation', ReservationAPIView.as_view()),
-    path('api/reservation/<str:pk>', ReservationAPIView.as_view()),  # to capture our ids
-
-    path('date', DateAPIView.as_view()),
-    path('date/<str:pk>', DateAPIView.as_view()),  # to capture our ids
-
-    path('api/doctorlist', DoctorAPIView.as_view()),
-
-    path('docdescriptrem/<str:pk>', RemoveDocDescrAPIView.as_view()),  # to capture our ids
-
-    path('listuserres/<str:pk>', ListUserResAPIView.as_view()),  # to capture our ids
-
-    path('docpatres/<str:pk>', DocPatResAPIView.as_view()),  # to capture our ids
-
-    path('doclistresbydate/<str:pk>', DocListResByDateAPIView.as_view()),  # to capture our ids
-
-
-]
+urlpatterns = router.urls

@@ -2,17 +2,25 @@ from Tools.scripts.make_ctype import values
 from django.db.models import DateTimeField
 from django.http import Http404
 from django.utils.functional import SimpleLazyObject
+from rest_framework import viewsets, status
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
+    DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
 
+from base.error_messages import ErrorMessage
+from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleException, DomainIsNotEligibleAPIException
 from projectapp.models import User, Treatment \
     , Reservation, Dates
 from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
-    DateSerializer
+    DateSerializer, TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer
+from projectapp.services.token_service import TokenService, MTokenService
+from projectapp.services.user_service import UserService
 
 
-class UserAPIView(APIView):
+class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                  viewsets.GenericViewSet):
 
     def get_user(self, pk):
         try:
@@ -20,7 +28,7 @@ class UserAPIView(APIView):
         except User.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk=None, format=None):
+    def list(self, request, pk=None, format=None):
         if pk:
             data = self.get_user(pk)
         else:
@@ -28,23 +36,17 @@ class UserAPIView(APIView):
         serializer = UserSerializer(data, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
-        data = request.data
-        serializer = UserSerializer(data=data)
+    def create(self, request, *args, **kwargs):
+        user = MTokenHandler.handle(request, self.get_serializer, 'r', *args, **kwargs)
 
-        serializer.is_valid(raise_exception=True)
+        # UserService.update_status_based_on_payment(user)
 
-        serializer.save()
+        serializer = self.get_serializer(user)
+        headers = self.get_success_headers(serializer.data)
 
-        response = Response()
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-        response.data = {
-            'message': 'User Created Successfully',
-            'data': serializer.data
-        }
-        return response
-
-    def put(self, request, pk=None, format=None):
+    def partial_update(self, request, pk=None, format=None):
         user_to_update = User.objects.get(pk=pk)
         serializer = UserSerializer(instance=user_to_update, data=request.data, partial=True)
 
@@ -61,8 +63,8 @@ class UserAPIView(APIView):
 
         return response
 
-    def delete(self, request, pk, format=None):
-        user_to_delete = User.objects.get(pk=pk)
+    def perform_destroy(self, instance):
+        user_to_delete = User.objects.get(pk=instance)
 
         user_to_delete.delete()
 
@@ -71,9 +73,10 @@ class UserAPIView(APIView):
         })
 
 
-class RemoveDocDescrAPIView(APIView):
+class RemoveDocDescrViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                            viewsets.GenericViewSet):
 
-    def put(self, request, pk=None, format=None):
+    def update(self, request, pk=None, format=None):
         user_to_update = User.objects.get(pk=pk)
         serializer = UserSerializer(instance=user_to_update, data={'presentation': ""}, partial=True)
         if serializer.is_valid():
@@ -88,28 +91,29 @@ class RemoveDocDescrAPIView(APIView):
         return response
 
 
-class ListUserResAPIView(APIView):
-    def get(self, request, pk=None, format=None):
+class ListUserResViewSet(RetrieveModelMixin,ListModelMixin, viewsets.GenericViewSet):
+    def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(user=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DocPatResAPIView(APIView):
-    def get(self, request, pk=None, format=None):
+class DocPatResViewSet(RetrieveModelMixin,ListModelMixin, viewsets.GenericViewSet):
+    def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(doctor=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DocListResByDateAPIView(APIView):
-    def get(self, request, pk=None, format=None):
+class DocListResByDateViewSet(RetrieveModelMixin,ListModelMixin, viewsets.GenericViewSet):
+    def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(doctor=pk).order_by('date')
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class TreatmentAPIView(APIView):
+class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                       viewsets.GenericViewSet):
 
     def get_treatment(self, pk):
         try:
@@ -117,7 +121,7 @@ class TreatmentAPIView(APIView):
         except Treatment.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk=None, format=None):
+    def list(self, request, pk=None, format=None):
         if pk:
             data = self.get_treatment(pk)
         else:
@@ -125,7 +129,7 @@ class TreatmentAPIView(APIView):
         serializer = TreatmentSerializer(data, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def create(self, request, *args, **kwargs):
         data = request.data
         serializer = TreatmentSerializer(data=data)
 
@@ -136,16 +140,15 @@ class TreatmentAPIView(APIView):
         response = Response()
 
         response.data = {
-            'message': 'Treatment created successfully',
+            'message': 'Treatement Created Successfully',
             'data': serializer.data
         }
 
         return response
 
-    def put(self, request, pk=None, format=None):
+    def partial_update(self, request, pk=None, format=None):
         treatment_to_update = Treatment.objects.get(pk=pk)
-        serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data,
-                                         partial=True)
+        serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data, partial=True)
 
         serializer.is_valid(raise_exception=True)
 
@@ -154,24 +157,24 @@ class TreatmentAPIView(APIView):
         response = Response()
 
         response.data = {
-            'message': 'Treatment updated successfully',
+            'message': 'Treatment Updated Successfully',
             'data': serializer.data
         }
 
         return response
 
-    #
-    def delete(self, request, pk, format=None):
-        treatment_to_delete = Treatment.objects.get(pk=pk)
+    def perform_destroy(self, instance):
+        treatment_to_delete = Treatment.objects.get(pk=instance)
 
         treatment_to_delete.delete()
 
         return Response({
-            'message': 'Treatment deleted successfully'
+            'message': 'Treatment Deleted Successfully'
         })
 
 
-class ReservationAPIView(APIView):
+class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                            viewsets.GenericViewSet):
 
     def get_reservation(self, pk):
         try:
@@ -179,7 +182,7 @@ class ReservationAPIView(APIView):
         except Reservation.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk=None, format=None):
+    def list(self, request, pk=None, format=None):
         if pk:
             data = self.get_reservation(pk)
         else:
@@ -187,7 +190,7 @@ class ReservationAPIView(APIView):
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def create(self, request, *args, **kwargs):
         data = request.data
         serializer = ReservationSerializer(data=data)
 
@@ -204,7 +207,7 @@ class ReservationAPIView(APIView):
 
         return response
 
-    def put(self, request, pk=None, format=None):
+    def partial_update(self, request, pk=None, format=None):
         reservation_to_update = Reservation.objects.get(pk=pk)
         serializer = ReservationSerializer(instance=reservation_to_update, data=request.data, partial=True)
 
@@ -221,8 +224,8 @@ class ReservationAPIView(APIView):
 
         return response
 
-    def delete(self, request, pk, format=None):
-        reservation_to_delete = Reservation.objects.get(pk=pk)
+    def perform_destroy(self, instance):
+        reservation_to_delete = Reservation.objects.get(pk=instance)
 
         reservation_to_delete.delete()
 
@@ -231,28 +234,25 @@ class ReservationAPIView(APIView):
         })
 
 
-class DoctorAPIView(APIView):
+class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
+                    viewsets.GenericViewSet):
 
-    def get(self, usertype):
+    def list(self, request, *args, **kwargs):
         data = User.objects.filter(user_type="DOCTOR")
         serializer = DoctorSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DateAPIView(APIView):
+class DateViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                            viewsets.GenericViewSet):
 
     def get_date(self, pk):
         try:
-            data = Dates.objects.filter(pk=pk)
-            # date = datetime.strptime(data,"%Y-%b-%d")
-            # time = datetime.strptime(data,"%H")
-            # return date, time
-            return data
+            return Dates.objects.filter(pk=pk)
         except Dates.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk=None, format=None):
-        # I need to break the datetime object that i get from DB into a date and a time object then send them to frontend
+    def list(self, request, pk=None, format=None):
         if pk:
             data = self.get_date(pk)
         else:
@@ -260,12 +260,8 @@ class DateAPIView(APIView):
         serializer = DateSerializer(data, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def create(self, request, *args, **kwargs):
         data = request.data
-
-        # I need to receive 2 object, a date and a time object, then combine them and save them
-        # dataToString = data.strftime("%Y-%m-%d %H:00:00.000000")
-
         serializer = DateSerializer(data=data)
 
         serializer.is_valid(raise_exception=True)
@@ -278,9 +274,10 @@ class DateAPIView(APIView):
             'message': 'Date Created Successfully',
             'data': serializer.data
         }
+
         return response
 
-    def put(self, request, pk=None, format=None):
+    def partial_update(self, request, pk=None, format=None):
         date_to_update = Dates.objects.get(pk=pk)
         serializer = DateSerializer(instance=date_to_update, data=request.data, partial=True)
 
@@ -297,11 +294,74 @@ class DateAPIView(APIView):
 
         return response
 
-    def delete(self, request, pk, format=None):
-        date_to_delete = Dates.objects.get(pk=pk)
+    def perform_destroy(self, instance):
+        date_to_delete = Dates.objects.get(pk=instance)
 
         date_to_delete.delete()
 
         return Response({
             'message': 'Date Deleted Successfully'
         })
+
+
+class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = TokenRequestSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email', None)
+        mtoken = serializer.validated_data['mtoken']
+
+        if email is None:
+            user_id = serializer.validated_data['user_id']
+            email = UserService.get_by_id(user_id).email
+
+        token = TokenService.create_by_email_and_mtoken_with_request_params(email, mtoken, *args, **kwargs)
+        user = UserService.get_by_email(email)
+
+        # Invalidate used magic token
+        MTokenService.deactivate_by_key(mtoken)
+
+        self.serializer_class = TokenResponseSerializer
+        serializer = self.get_serializer({'user': user, 'token': token})
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class MTokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = MTokenRequestSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("Anything")
+        user = MTokenHandler.handle(request, self.get_serializer, 'l', *args, **kwargs)
+
+        self.serializer_class = MTokenResponseSerializer
+        serializer = self.get_serializer({'user': user})
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class MTokenHandler:
+
+    @staticmethod
+    def handle(request, get_serializer, rtype: str, *args, **kwargs) -> User:
+        serializer = get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except User.DoesNotExist:
+            raise UserDoesNotExistAPIException(ErrorMessage.user_does_not_exist_api_exception())
+
+        email = serializer.validated_data['email']
+
+        user: User
+        try:
+            base_url = request.build_absolute_uri('/')
+            user = UserService.create_by_email_with_request_params(email, rtype, base_url, *args, **kwargs)
+        except DomainIsNotEligibleException:
+            raise DomainIsNotEligibleAPIException(ErrorMessage.domain_is_not_eligible_api_exception())
+
+        return user

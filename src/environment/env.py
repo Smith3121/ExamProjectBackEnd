@@ -1,1 +1,1 @@
-# APP_ENV = 'HTML'
+APP_ENV = 'HTML'

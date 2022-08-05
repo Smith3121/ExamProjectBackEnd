@@ -18,6 +18,9 @@ from django.db import models
 from django.db.models import CharField, ForeignKey, DateTimeField
 from django.utils.timezone import now
 
+from base.models import TimeStampedModel
+from finalproject.settings import APP_SETTINGS
+
 
 class User(AbstractUser):
     class Usertype(models.TextChoices):
@@ -93,3 +96,47 @@ class Reservation(models.Model):
 
     def __str__(self) -> User.username:
         return str(self.user)
+
+
+class TokenRequest(TimeStampedModel):
+    user_id = models.UUIDField(db_column='userId', default=None, null=True, blank=True)
+    email = models.CharField(max_length=254, default=None, null=True, blank=True)
+    mtoken = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.email
+
+
+class MTokenRequest(TimeStampedModel):
+    email = models.CharField(max_length=254)
+
+    def __str__(self):
+        return self.email
+
+
+class IneligibleDomain(TimeStampedModel):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class TrainingSpace(TimeStampedModel):
+    """An active training space means, that one of the users in the training space paid for it,
+    therefore that user (claimer) claimed the training space and can act as the admin of it.
+    """
+
+    id = models.CharField(primary_key=True, max_length=255, editable=False)
+    name = models.CharField(max_length=255)
+    free_limit = models.IntegerField(db_column='freeLimit', default=APP_SETTINGS['FREE_LIMIT'])
+    creator = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='created_training_space')
+    claimer = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='claimed_training_space'
+    )
+
+    def __str__(self):
+        return self.name
