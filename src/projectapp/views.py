@@ -1,6 +1,7 @@
 from Tools.scripts.make_ctype import values
 from django.db.models import DateTimeField
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.utils.functional import SimpleLazyObject
 from rest_framework import viewsets, status
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
@@ -8,6 +9,8 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveMode
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
+
+from rest_framework.viewsets import ViewSet
 
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleException, DomainIsNotEligibleAPIException
@@ -20,19 +23,18 @@ from projectapp.services.user_service import UserService
 
 
 class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                  viewsets.GenericViewSet):
+                  viewsets.GenericViewSet, ViewSet):
 
-    def get_user(self, pk):
-        try:
-            return User.objects.filter(pk=pk)
-        except User.DoesNotExist:
-            raise Http404
+    queryset = User.objects.all()
+
+    def retrieve(self, request, pk=None):
+        user = get_object_or_404(self.queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
     def list(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_user(pk)
-        else:
-            data = User.objects.all()
+        user = self.request.user
+        data = User.objects.all()
         serializer = UserSerializer(data, many=True)
         return Response(serializer.data)
 
@@ -91,21 +93,21 @@ class RemoveDocDescrViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin
         return response
 
 
-class ListUserResViewSet(RetrieveModelMixin,ListModelMixin, viewsets.GenericViewSet):
+class ListUserResViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(user=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DocPatResViewSet(RetrieveModelMixin,ListModelMixin, viewsets.GenericViewSet):
+class DocPatResViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(doctor=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DocListResByDateViewSet(RetrieveModelMixin,ListModelMixin, viewsets.GenericViewSet):
+class DocListResByDateViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(doctor=pk).order_by('date')
         serializer = ReservationSerializer(data, many=True)
@@ -115,17 +117,29 @@ class DocListResByDateViewSet(RetrieveModelMixin,ListModelMixin, viewsets.Generi
 class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                        viewsets.GenericViewSet):
 
-    def get_treatment(self, pk):
-        try:
-            return Treatment.objects.filter(pk=pk)
-        except Treatment.DoesNotExist:
-            raise Http404
+    queryset = Treatment.objects.all()
+
+    # def get_treatment(self, pk):
+    #     try:
+    #         return Treatment.objects.filter(pk=pk)
+    #     except Treatment.DoesNotExist:
+    #         raise Http404
+
+    # def list(self, request, pk=None, format=None):
+    #     if pk:
+    #         data = self.get_treatment(pk)
+    #     else:
+    #         data = Treatment.objects.all()
+    #     serializer = TreatmentSerializer(data, many=True)
+    #     return Response(serializer.data)
+    def retrieve(self, request, pk=None):
+        treatment = get_object_or_404(self.queryset, pk=pk)
+        serializer = TreatmentSerializer(treatment)
+        return Response(serializer.data)
 
     def list(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_treatment(pk)
-        else:
-            data = Treatment.objects.all()
+        # treatment = self.request.treatment
+        data = Treatment.objects.all()
         serializer = TreatmentSerializer(data, many=True)
         return Response(serializer.data)
 
@@ -174,7 +188,7 @@ class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Upd
 
 
 class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                            viewsets.GenericViewSet):
+                         viewsets.GenericViewSet):
 
     def get_reservation(self, pk):
         try:
@@ -244,7 +258,7 @@ class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
 
 
 class DateViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                            viewsets.GenericViewSet):
+                  viewsets.GenericViewSet):
 
     def get_date(self, pk):
         try:

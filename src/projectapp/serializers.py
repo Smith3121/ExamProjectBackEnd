@@ -11,7 +11,9 @@ from rest_framework.validators import UniqueValidator
 from base.error_messages import ErrorMessage
 from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
-    , Reservation, Dates, TokenRequest, TrainingSpace, IneligibleDomain
+    , Reservation, Dates, TokenRequest, IneligibleDomain
+
+    # TrainingSpace\
 from projectapp.services.user_service import UserService
 
 
@@ -136,12 +138,12 @@ class MTokenResponseSerializer(serializers.Serializer):
 #         fields = ['id']
 #
 
-class TrainingSpaceSerializer(serializers.ModelSerializer):
-    creator = UserSerializer(read_only=True)
-
-    class Meta:
-        model = TrainingSpace
-        fields = ['id', 'name', 'creator']
+# class TrainingSpaceSerializer(serializers.ModelSerializer):
+#     creator = UserSerializer(read_only=True)
+#
+#     class Meta:
+#         model = TrainingSpace
+#         fields = ['id', 'name', 'creator']
 
 
 class IneligibleDomainSerializer(serializers.ModelSerializer):

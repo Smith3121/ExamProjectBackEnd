@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from distutils import util
 from pathlib import Path
 
+
+AUTH_USER_MODEL = 'projectapp.User'
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -147,7 +151,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'projectapp.User'
 
 PASSWORDLESS_AUTH = {
     'PASSWORDLESS_AUTH_TYPES': ['EMAIL'],
@@ -163,7 +166,7 @@ PASSWORDLESS_AUTH = {
     ],
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'ioni_dan@yahoo.com'
 EMAIL_PORT = '465'
 EMAIL_USE_SSL = True

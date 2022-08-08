@@ -53,6 +53,13 @@ class User(AbstractUser):
     presentation = models.TextField(blank=True)
     pic_url = models.CharField(max_length=1000, blank=True)
 
+    # training_space = models.ForeignKey(
+    #    " TrainingSpace",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     related_name='users'
+    # )
+
     def __str__(self) -> str:
         return self.username
 
@@ -62,7 +69,8 @@ class Treatment(models.Model):
     pic_url = models.CharField(max_length=1000)
     treatment_description = models.TextField(blank=True)
     comment = models.TextField(blank=True)
-    doctor = models.ForeignKey(User, related_name='treatment', on_delete=models.CASCADE, default='', to_field='username')
+    doctor = models.ForeignKey(User, related_name='treatment', on_delete=models.CASCADE, default='',
+                               to_field='username')
 
     # rating = models.IntegerField(default=0)
 
@@ -85,7 +93,8 @@ class Reservation(models.Model):
         DONE = 4
 
     user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE, to_field='username')
-    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='', to_field='treatment_name')
+    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='',
+                                  to_field='treatment_name')
     medical_note = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
     doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE, to_field='username')
@@ -120,23 +129,22 @@ class IneligibleDomain(TimeStampedModel):
     def __str__(self):
         return self.name
 
-
-class TrainingSpace(TimeStampedModel):
-    """An active training space means, that one of the users in the training space paid for it,
-    therefore that user (claimer) claimed the training space and can act as the admin of it.
-    """
-
-    id = models.CharField(primary_key=True, max_length=255, editable=False)
-    name = models.CharField(max_length=255)
-    free_limit = models.IntegerField(db_column='freeLimit', default=APP_SETTINGS['FREE_LIMIT'])
-    creator = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='created_training_space')
-    claimer = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name='claimed_training_space'
-    )
-
-    def __str__(self):
-        return self.name
+# class TrainingSpace(TimeStampedModel):
+#     """An active training space means, that one of the users in the training space paid for it,
+#     therefore that user (claimer) claimed the training space and can act as the admin of it.
+#     """
+#
+#     id = models.CharField(primary_key=True, max_length=255, editable=False)
+#     name = models.CharField(max_length=255)
+#     free_limit = models.IntegerField(db_column='freeLimit', default=APP_SETTINGS['FREE_LIMIT'])
+#     creator = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='created_training_space')
+#     claimer = models.OneToOneField(
+#         User,
+#         on_delete=models.CASCADE,
+#         null=True,
+#         blank=True,
+#         related_name='claimed_training_space'
+#     )
+#
+#     def __str__(self):
+#         return self.name
