@@ -98,7 +98,7 @@ class Reservation(models.Model):
     medical_note = models.TextField(blank=True, null=True, default=' ')
     problem_description = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
-    doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE, to_field='username')
+    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE, to_field='username')
     date = models.ForeignKey(Dates, related_name='resdate', on_delete=models.CASCADE, to_field='date', default="")
 
     class Meta:

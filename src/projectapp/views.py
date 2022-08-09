@@ -43,7 +43,6 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
     def create(self, request, *args, **kwargs):
         user = MTokenHandler.handle(request, self.get_serializer, 'r', *args, **kwargs)
 
-        # UserService.update_status_based_on_payment(user)
 
         serializer = self.get_serializer(user)
         headers = self.get_success_headers(serializer.data)
@@ -78,15 +77,6 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
 
     def perform_destroy(self, instance):
         instance.delete()
-
-    # def perform_destroy(self, instance):
-    #     user_to_delete = User.objects.get(pk=instance)
-    #
-    #     user_to_delete.delete()
-    #
-    #     return Response({
-    #         'message': 'User Deleted Successfully'
-    #     })
 
 
 class RemoveDocDescrViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
@@ -225,37 +215,21 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        data = request.data
+        serializer = ReservationSerializer(data=data)
 
-    def perform_create(self, serializer):
+        serializer.is_valid(raise_exception=True)
+
         serializer.save()
 
-    def get_success_headers(self, data):
-        try:
-            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
-        except (TypeError, KeyError):
-            return {}
+        response = Response()
 
-    # def create(self, request, *args, **kwargs):
-    #     data = request.data
-    #     serializer = ReservationSerializer(data=data)
-    #
-    #     serializer.is_valid(raise_exception=True)
-    #
-    #     serializer.save()
-    #
-    #     response = Response()
-    #
-    #     response.data = {
-    #         'message': 'Reservation Created Successfully',
-    #         'data': serializer.data
-    #     }
-    #
-    #     return response
+        response.data = {
+            'message': 'Reservation Created Successfully',
+            'data': serializer.data
+        }
+
+        return response
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)

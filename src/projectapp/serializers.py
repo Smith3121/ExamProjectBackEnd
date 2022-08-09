@@ -41,9 +41,39 @@ class DoctorSerializer(serializers.ModelSerializer):
         fields = ['id', 'username']
 
 
+class TreatmentSerializer(serializers.ModelSerializer):
+    doctor = DoctorSerializer(read_only=True)
+
+    class Meta:
+        model = Treatment
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'doctor', 'id')
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    doctor = DoctorSerializer(read_only=True)
+    user = UserSerializerForRes(read_only=True)
+    treatment = TreatmentSerializerForRes(read_only=True)
+
+    class Meta:
+        model = Reservation
+        fields = '__all__'
+
+
+# class ResSerializerForUser(serializers.ModelSerializer):
+#     doctor = DoctorSerializer(read_only=True)
+#     user = UserSerializerForRes(read_only=True)
+#     treatment = TreatmentSerializerForRes(read_only=True)
+#
+#     class Meta:
+#         model = Reservation
+#         fields = ('date', "id", "doctor", "user", "treatment")
+
+
 class UserSerializer(serializers.ModelSerializer):
     reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # detailedReservation = ResSerializerForUser(read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -55,7 +85,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-                  'presentation', 'pic_url', 'reservations', 'treatment', 'specialisation']
+                  'presentation', 'pic_url', 'reservations', 'treatment', 'specialisation', "doctor"]
         # fields = '__all__'
 
     def is_valid(self, raise_exception=False):
@@ -72,26 +102,6 @@ class UserSerializer(serializers.ModelSerializer):
                     raise FormInvalid(ErrorMessage.email_is_invalid())
 
             raise e
-
-
-class TreatmentSerializer(serializers.ModelSerializer):
-    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    doctor = DoctorSerializer(read_only=True)
-
-    class Meta:
-        model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'doctor', 'id')
-
-
-class ReservationSerializer(serializers.ModelSerializer):
-    doctor = DoctorSerializer(read_only=True)
-    user = UserSerializerForRes(read_only=True)
-    treatment = TreatmentSerializerForRes(read_only=True)
-
-    class Meta:
-        model = Reservation
-        fields = '__all__'
-        # depth = 1
 
 
 class TokenRequestSerializer(serializers.ModelSerializer):
