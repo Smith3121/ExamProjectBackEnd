@@ -11,16 +11,16 @@ from rest_framework.validators import UniqueValidator
 from base.error_messages import ErrorMessage
 from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
-    , Reservation, Dates, TokenRequest, IneligibleDomain
+    , Reservation, TokenRequest, IneligibleDomain
 
 
 from projectapp.services.user_service import UserService
 
 
-class DateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dates
-        fields = '__all__'
+# class DateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Dates
+#         fields = '__all__'
 
 
 class UserSerializerForRes(serializers.ModelSerializer):
@@ -53,6 +53,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     doctor = DoctorSerializer(read_only=True)
     user = UserSerializerForRes(read_only=True)
     treatment = TreatmentSerializerForRes(read_only=True)
+    # date = DateSerializer(read_only=True)
 
     class Meta:
         model = Reservation

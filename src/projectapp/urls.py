@@ -14,8 +14,8 @@ router.register('treatment/<str:pk>', views.TreatmentViewSet, basename='treatmen
 router.register('reservation', views.ReservationViewSet, basename='reservation')
 router.register('reservation/<str:pk>', views.ReservationViewSet, basename='reservation')
 
-router.register('date', views.DateViewSet, basename='date')
-router.register('date/<str:pk>', views.DateViewSet, basename='date')
+# router.register('date', views.DateViewSet, basename='date')
+# router.register('date/<str:pk>', views.DateViewSet, basename='date')
 
 router.register('token', views.TokenViewSet, basename='user')
 

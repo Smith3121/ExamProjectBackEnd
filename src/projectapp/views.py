@@ -16,9 +16,9 @@ from rest_framework.viewsets import ViewSet
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleException, DomainIsNotEligibleAPIException
 from projectapp.models import User, Treatment \
-    , Reservation, Dates
-from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
-    DateSerializer, TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer
+    , Reservation
+    # , Dates
+from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer,  TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer
 from projectapp.services.token_service import TokenService, MTokenService
 from projectapp.services.user_service import UserService
 
@@ -105,8 +105,8 @@ class ListUserResViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericVie
 
 
 class DocPatResViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
-    def list(self, request, pk=None, format=None):
-        data = Reservation.objects.filter(doctor=pk)
+    def list(self, request, pk=None, format=None, name=str):
+        data = Reservation.objects.filter(doctor=pk, username=name)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
@@ -273,62 +273,62 @@ class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
         return Response(serializer.data)
 
 
-class DateViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                  viewsets.GenericViewSet):
-    queryset = Dates.objects.all()
-
-    def retrieve(self, request, pk=None):
-        date = get_object_or_404(self.queryset, pk=pk)
-        serializer = DateSerializer(date)
-        return Response(serializer.data)
-
-    def list(self, request, pk=None, format=None):
-        data = Dates.objects.all()
-        serializer = DateSerializer(data, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        serializer = DateSerializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Date Created Successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    def partial_update(self, request, pk=None, format=None):
-        date_to_update = Dates.objects.get(pk=pk)
-        serializer = DateSerializer(instance=date_to_update, data=request.data, partial=True)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Date Updated Successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    def perform_destroy(self, instance):
-        date_to_delete = Dates.objects.get(pk=instance)
-
-        date_to_delete.delete()
-
-        return Response({
-            'message': 'Date Deleted Successfully'
-        })
+# class DateViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+#                   viewsets.GenericViewSet):
+#     queryset = Dates.objects.all()
+#
+#     def retrieve(self, request, pk=None):
+#         date = get_object_or_404(self.queryset, pk=pk)
+#         serializer = DateSerializer(date)
+#         return Response(serializer.data)
+#
+#     def list(self, request, pk=None, format=None):
+#         data = Dates.objects.all()
+#         serializer = DateSerializer(data, many=True)
+#         return Response(serializer.data)
+#
+#     def create(self, request, *args, **kwargs):
+#         data = request.data
+#         serializer = DateSerializer(data=data)
+#
+#         serializer.is_valid(raise_exception=True)
+#
+#         serializer.save()
+#
+#         response = Response()
+#
+#         response.data = {
+#             'message': 'Date Created Successfully',
+#             'data': serializer.data
+#         }
+#
+#         return response
+#
+#     def partial_update(self, request, pk=None, format=None):
+#         date_to_update = Dates.objects.get(pk=pk)
+#         serializer = DateSerializer(instance=date_to_update, data=request.data, partial=True)
+#
+#         serializer.is_valid(raise_exception=True)
+#
+#         serializer.save()
+#
+#         response = Response()
+#
+#         response.data = {
+#             'message': 'Date Updated Successfully',
+#             'data': serializer.data
+#         }
+#
+#         return response
+#
+#     def perform_destroy(self, instance):
+#         date_to_delete = Dates.objects.get(pk=instance)
+#
+#         date_to_delete.delete()
+#
+#         return Response({
+#             'message': 'Date Deleted Successfully'
+#         })
 
 
 class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):

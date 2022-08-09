@@ -78,11 +78,11 @@ class Treatment(models.Model):
         return self.treatment_name
 
 
-class Dates(models.Model):
-    date = models.DateTimeField(unique=True, default="")
-
-    def __str__(self) -> str:
-        return str(self.date)
+# class Dates(models.Model):
+#     date = models.DateTimeField(unique=True)
+#
+#     def __str__(self) -> str:
+#         return str(self.date)
 
 
 class Reservation(models.Model):
@@ -92,14 +92,14 @@ class Reservation(models.Model):
         REFUSED = 3
         DONE = 4
 
-    user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE, to_field='username')
-    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='',
-                                  to_field='treatment_name')
+    user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE)
+    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='')
     medical_note = models.TextField(blank=True, null=True, default=' ')
     problem_description = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
-    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE, to_field='username')
-    date = models.ForeignKey(Dates, related_name='resdate', on_delete=models.CASCADE, to_field='date', default="")
+    doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE)
+    # date = models.ForeignKey(Dates, related_name='resdate', on_delete=models.CASCADE, default="")
+    date = models.DateTimeField()
 
     class Meta:
         unique_together = ('doctor', 'date',)
