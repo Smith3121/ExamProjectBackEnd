@@ -24,8 +24,9 @@ from projectapp.services.user_service import UserService
 
 class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                   viewsets.GenericViewSet, ViewSet):
-
     queryset = User.objects.all()
+
+    serializer_class = UserSerializer
 
     def retrieve(self, request, pk=None):
         user = get_object_or_404(self.queryset, pk=pk)
@@ -65,14 +66,22 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
 
         return response
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def perform_destroy(self, instance):
-        user_to_delete = User.objects.get(pk=instance)
+        instance.delete()
 
-        user_to_delete.delete()
-
-        return Response({
-            'message': 'User Deleted Successfully'
-        })
+    # def perform_destroy(self, instance):
+    #     user_to_delete = User.objects.get(pk=instance)
+    #
+    #     user_to_delete.delete()
+    #
+    #     return Response({
+    #         'message': 'User Deleted Successfully'
+    #     })
 
 
 class RemoveDocDescrViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
@@ -116,8 +125,8 @@ class DocListResByDateViewSet(RetrieveModelMixin, ListModelMixin, viewsets.Gener
 
 class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                        viewsets.GenericViewSet):
-
     queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer
 
     # def get_treatment(self, pk):
     #     try:
@@ -160,47 +169,53 @@ class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Upd
 
         return response
 
-    def partial_update(self, request, pk=None, format=None):
-        treatment_to_update = Treatment.objects.get(pk=pk)
-        serializer = TreatmentSerializer(instance=treatment_to_update, data=request.data, partial=True)
-
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
         serializer.save()
 
-        response = Response()
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
 
-        response.data = {
-            'message': 'Treatment Updated Successfully',
-            'data': serializer.data
-        }
-
-        return response
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance):
-        treatment_to_delete = Treatment.objects.get(pk=instance)
-
-        treatment_to_delete.delete()
-
-        return Response({
-            'message': 'Treatment Deleted Successfully'
-        })
+        instance.delete()
 
 
 class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                          viewsets.GenericViewSet):
+    # def get_reservation(self, pk):
+    #     try:
+    #         return Reservation.objects.filter(pk=pk)
+    #     except Reservation.DoesNotExist:
+    #         raise Http404
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
 
-    def get_reservation(self, pk):
-        try:
-            return Reservation.objects.filter(pk=pk)
-        except Reservation.DoesNotExist:
-            raise Http404
+    def retrieve(self, request, pk=None):
+        reservation = get_object_or_404(self.queryset, pk=pk)
+        serializer = ReservationSerializer(reservation)
+        return Response(serializer.data)
 
     def list(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_reservation(pk)
-        else:
-            data = Reservation.objects.all()
+        data = Reservation.objects.all()
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
@@ -221,31 +236,51 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
 
         return response
 
-    def partial_update(self, request, pk=None, format=None):
-        reservation_to_update = Reservation.objects.get(pk=pk)
-        serializer = ReservationSerializer(instance=reservation_to_update, data=request.data, partial=True)
-
+    # def partial_update(self, request, pk=None, format=None):
+    #
+    #     reservation_to_update = Reservation.objects.get(pk=pk)
+    #     serializer = ReservationSerializer(instance=reservation_to_update, data=request.data, partial=True)
+    #
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     serializer.save()
+    #
+    #     response = Response()
+    #
+    #     response.data = {
+    #         'message': 'Reservation Updated Successfully',
+    #         'data': serializer.data
+    #     }
+    #
+    #     return response
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
         serializer.save()
 
-        response = Response()
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
 
-        response.data = {
-            'message': 'Reservation Updated Successfully',
-            'data': serializer.data
-        }
-
-        return response
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance):
-        reservation_to_delete = Reservation.objects.get(pk=instance)
-
-        reservation_to_delete.delete()
-
-        return Response({
-            'message': 'Reservation Deleted Successfully'
-        })
+        instance.delete()
 
 
 class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
@@ -259,18 +294,15 @@ class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
 
 class DateViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                   viewsets.GenericViewSet):
+    queryset = Dates.objects.all()
 
-    def get_date(self, pk):
-        try:
-            return Dates.objects.filter(pk=pk)
-        except Dates.DoesNotExist:
-            raise Http404
+    def retrieve(self, request, pk=None):
+        date = get_object_or_404(self.queryset, pk=pk)
+        serializer = DateSerializer(date)
+        return Response(serializer.data)
 
     def list(self, request, pk=None, format=None):
-        if pk:
-            data = self.get_date(pk)
-        else:
-            data = Dates.objects.all()
+        data = Dates.objects.all()
         serializer = DateSerializer(data, many=True)
         return Response(serializer.data)
 

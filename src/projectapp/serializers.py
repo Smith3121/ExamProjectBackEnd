@@ -13,7 +13,7 @@ from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
     , Reservation, Dates, TokenRequest, IneligibleDomain
 
-    # TrainingSpace\
+
 from projectapp.services.user_service import UserService
 
 
@@ -130,6 +130,7 @@ class MTokenResponseSerializer(serializers.Serializer):
 
     class Meta:
         fields = ['user']
+
 
 
 # class UserSerializer(serializers.ModelSerializer):

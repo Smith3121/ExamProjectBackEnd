@@ -9,7 +9,7 @@ from projectapp.models import User
 def create_auth_token(sender, instance=None, **kwargs):
     print("This email printed", instance.email)
     print("This is the sender", sender)
-    print("This is the sender name", sender.username)
+    # print("This is the sender name", sender.username)
 
     if len(instance.email) > 0:
         print("Instance email is longer than zero")

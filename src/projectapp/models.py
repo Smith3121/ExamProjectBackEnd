@@ -23,15 +23,15 @@ from finalproject.settings import APP_SETTINGS
 
 
 class User(AbstractUser):
-    class Usertype(models.TextChoices):
-        ADMIN = "ADMIN"
-        USER = "USER"
-        DOCTOR = "DOCTOR"
+    class Usertype(models.IntegerChoices):
+        ADMIN = 1
+        USER = 2
+        DOCTOR = 3
 
-    class Gender(models.TextChoices):
-        MAN = "MAN"
-        WOMAN = "WOMAN"
-        OTHER = "OTHER"
+    class Gender(models.IntegerChoices):
+        MAN = 1
+        WOMAN = 2
+        OTHER = 3
 
     REQUIRED_FIELDS = []
     email_verified = models.BooleanField(db_column='emailVerified', default=False)
@@ -45,8 +45,8 @@ class User(AbstractUser):
     )
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user_type = models.CharField(choices=Usertype.choices, blank=True, default='', max_length=100)
-    gender = models.CharField(choices=Gender.choices, default='', max_length=100)
-    number = models.CharField(max_length=30)
+    gender = models.CharField(choices=Gender.choices, default='', max_length=100, blank=True)
+    number = models.CharField(max_length=30, blank=True)
     date_of_birth = models.DateTimeField(null=True, blank=True)
     specialisation = models.CharField(max_length=120, default='', blank=True)
 
@@ -96,6 +96,7 @@ class Reservation(models.Model):
     treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE, default='',
                                   to_field='treatment_name')
     medical_note = models.TextField(blank=True, null=True, default=' ')
+    problem_description = models.TextField(blank=True, null=True, default=' ')
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
     doctor = models.ForeignKey(User, related_name='resdoctor', on_delete=models.CASCADE, to_field='username')
     date = models.ForeignKey(Dates, related_name='resdate', on_delete=models.CASCADE, to_field='date', default="")
