@@ -26,7 +26,7 @@ class DateSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'id', 'treatment']
+        fields = ['username', 'id']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class TreatmentSerializer(serializers.ModelSerializer):
     # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    doctor = DoctorSerializer(read_only=True)
 
     class Meta:
         model = Treatment
@@ -72,6 +72,8 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
+    doctor = DoctorSerializer(read_only=True)
+
     class Meta:
         model = Reservation
         fields = '__all__'
