@@ -23,10 +23,22 @@ class DateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserSerializerForRes(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
+
+class TreatmentSerializerForRes(serializers.ModelSerializer):
+    class Meta:
+        model = Treatment
+        fields = ('id', 'treatment_name')
+
+
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'id']
+        fields = ['id', 'username']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -73,6 +85,8 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     doctor = DoctorSerializer(read_only=True)
+    user = UserSerializerForRes(read_only=True)
+    treatment = TreatmentSerializerForRes(read_only=True)
 
     class Meta:
         model = Reservation
@@ -132,21 +146,6 @@ class MTokenResponseSerializer(serializers.Serializer):
 
     class Meta:
         fields = ['user']
-
-
-
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id']
-#
-
-# class TrainingSpaceSerializer(serializers.ModelSerializer):
-#     creator = UserSerializer(read_only=True)
-#
-#     class Meta:
-#         model = TrainingSpace
-#         fields = ['id', 'name', 'creator']
 
 
 class IneligibleDomainSerializer(serializers.ModelSerializer):

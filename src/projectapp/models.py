@@ -130,22 +130,3 @@ class IneligibleDomain(TimeStampedModel):
     def __str__(self):
         return self.name
 
-# class TrainingSpace(TimeStampedModel):
-#     """An active training space means, that one of the users in the training space paid for it,
-#     therefore that user (claimer) claimed the training space and can act as the admin of it.
-#     """
-#
-#     id = models.CharField(primary_key=True, max_length=255, editable=False)
-#     name = models.CharField(max_length=255)
-#     free_limit = models.IntegerField(db_column='freeLimit', default=APP_SETTINGS['FREE_LIMIT'])
-#     creator = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='created_training_space')
-#     claimer = models.OneToOneField(
-#         User,
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name='claimed_training_space'
-#     )
-#
-#     def __str__(self):
-#         return self.name

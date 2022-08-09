@@ -7,6 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from datetime import datetime
 
@@ -48,7 +49,6 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
@@ -225,26 +225,24 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        data = request.data
-        serializer = ReservationSerializer(data=data)
-
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def perform_create(self, serializer):
         serializer.save()
 
-        response = Response()
+    def get_success_headers(self, data):
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
 
-        response.data = {
-            'message': 'Reservation Created Successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    # def partial_update(self, request, pk=None, format=None):
-    #
-    #     reservation_to_update = Reservation.objects.get(pk=pk)
-    #     serializer = ReservationSerializer(instance=reservation_to_update, data=request.data, partial=True)
+    # def create(self, request, *args, **kwargs):
+    #     data = request.data
+    #     serializer = ReservationSerializer(data=data)
     #
     #     serializer.is_valid(raise_exception=True)
     #
@@ -253,11 +251,12 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
     #     response = Response()
     #
     #     response.data = {
-    #         'message': 'Reservation Updated Successfully',
+    #         'message': 'Reservation Created Successfully',
     #         'data': serializer.data
     #     }
     #
     #     return response
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
         instance = self.get_object()
@@ -290,9 +289,12 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
 
 class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
                     viewsets.GenericViewSet):
+    queryset = User.objects.all()
+
+    serializer_class = DoctorSerializer
 
     def list(self, request, *args, **kwargs):
-        data = User.objects.filter(user_type="DOCTOR")
+        data = User.objects.filter(user_type=3)
         serializer = DoctorSerializer(data, many=True)
         return Response(serializer.data)
 
