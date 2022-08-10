@@ -104,9 +104,9 @@ class ListUserReservationViewSet(RetrieveModelMixin, ListModelMixin, viewsets.Ge
         return Response(serializer.data)
 
 
-class ListDoctorReservationViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
-    def list(self, request, pk=None, format=None, name=str):
-        data = Reservation.objects.filter(doctor=pk, username=name)
+class ListDoctorReservationByNameViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
+    def list(self, request, pk=None, format=None):
+        data = Reservation.objects.filter(doctor=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
@@ -392,3 +392,6 @@ class MTokenHandler:
             raise DomainIsNotEligibleAPIException(ErrorMessage.domain_is_not_eligible_api_exception())
 
         return user
+
+
+

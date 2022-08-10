@@ -14,9 +14,6 @@ router.register('treatment/<str:pk>', views.TreatmentViewSet, basename='treatmen
 router.register('reservation', views.ReservationViewSet, basename='reservation')
 router.register('reservation/<str:pk>', views.ReservationViewSet, basename='reservation')
 
-# router.register('date', views.DateViewSet, basename='date')
-# router.register('date/<str:pk>', views.DateViewSet, basename='date')
-
 router.register('token', views.TokenViewSet, basename='user')
 
 router.register('mtoken', views.MTokenViewSet, basename='user')
@@ -27,7 +24,7 @@ router.register('docdescriptrem/<str:pk>', views.RemoveDoctorDescriptionViewSet,
 
 router.register('listuserres/<str:pk>', views.ListUserReservationViewSet, basename='listuserres')
 
-router.register('docpatres/<str:pk>', views.ListDoctorReservationViewSet, basename='docpatres')
+router.register('docresbyname/<str:pk>', views.ListDoctorReservationByNameViewSet, basename='docresbyname')
 
 router.register('doclistresbydate/<str:pk>', views.ListDoctorReservationByDate, basename='doclistresbydate')
 
