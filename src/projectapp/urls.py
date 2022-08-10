@@ -23,12 +23,12 @@ router.register('mtoken', views.MTokenViewSet, basename='user')
 
 router.register('doctorlist', views.DoctorViewSet, basename='doctorlist')
 
-router.register('docdescriptrem/<str:pk>', views.RemoveDocDescrViewSet, basename='removedocdescr')
+router.register('docdescriptrem/<str:pk>', views.RemoveDoctorDescriptionViewSet, basename='removedocdescr')
 
-router.register('listuserres/<str:pk>', views.ListUserResViewSet, basename='listuserres')
+router.register('listuserres/<str:pk>', views.ListUserReservationViewSet, basename='listuserres')
 
-router.register('docpatres/<str:pk>', views.DocPatResViewSet, basename='docpatres')
+router.register('docpatres/<str:pk>', views.ListDoctorReservationViewSet, basename='docpatres')
 
-router.register('doclistresbydate/<str:pk>', views.DocListResByDateViewSet, basename='doclistresbydate')
+router.register('doclistresbydate/<str:pk>', views.ListDoctorReservationByDate, basename='doclistresbydate')
 
 urlpatterns = router.urls

@@ -79,8 +79,8 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
         instance.delete()
 
 
-class RemoveDocDescrViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                            viewsets.GenericViewSet):
+class RemoveDoctorDescriptionViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                                     viewsets.GenericViewSet):
 
     def update(self, request, pk=None, format=None):
         user_to_update = User.objects.get(pk=pk)
@@ -97,21 +97,21 @@ class RemoveDocDescrViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin
         return response
 
 
-class ListUserResViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
+class ListUserReservationViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(user=pk)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DocPatResViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
+class ListDoctorReservationViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, pk=None, format=None, name=str):
         data = Reservation.objects.filter(doctor=pk, username=name)
         serializer = ReservationSerializer(data, many=True)
         return Response(serializer.data)
 
 
-class DocListResByDateViewSet(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
+class ListDoctorReservationByDate(RetrieveModelMixin, ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, pk=None, format=None):
         data = Reservation.objects.filter(doctor=pk).order_by('date')
         serializer = ReservationSerializer(data, many=True)

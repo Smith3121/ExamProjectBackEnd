@@ -44,8 +44,8 @@ class User(AbstractUser):
         },
     )
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    user_type = models.CharField(choices=Usertype.choices, blank=True, default='', max_length=100)
-    gender = models.CharField(choices=Gender.choices, default='', max_length=100, blank=True)
+    user_type = models.IntegerField(choices=Usertype.choices, blank=True)
+    gender = models.IntegerField(choices=Gender.choices, blank=True)
     number = models.CharField(max_length=30, blank=True)
     date_of_birth = models.DateTimeField(null=True, blank=True)
     specialisation = models.CharField(max_length=120, default='', blank=True)
