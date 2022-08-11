@@ -4,6 +4,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.functional import SimpleLazyObject
 from rest_framework import viewsets, status
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
 from rest_framework.response import Response
@@ -59,6 +60,7 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
+
 class RemoveDoctorDescriptionViewSet(UpdateModelMixin,
                                      viewsets.GenericViewSet):
 
@@ -98,48 +100,41 @@ class ListDoctorReservationByDate(RetrieveModelMixin, ListModelMixin, viewsets.G
         return Response(serializer.data)
 
 
-class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                       viewsets.GenericViewSet):
-    queryset = Treatment.objects.all()
-    serializer_class = TreatmentSerializer
+# class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+#                        viewsets.GenericViewSet):
+#
+#     queryset = Treatment.objects.all()
+#     serializer_class = TreatmentSerializer
+#
+#     def update(self, request, *args, **kwargs):
+#         partial = kwargs.pop('partial', True)
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=partial)
+#         serializer.is_valid(raise_exception=True)
+#         self.perform_update(serializer)
+#
+#         if getattr(instance, '_prefetched_objects_cache', None):
+#             # If 'prefetch_related' has been applied to a queryset, we need to
+#             # forcibly invalidate the prefetch cache on the instance.
+#             instance._prefetched_objects_cache = {}
+#
+#         return Response(serializer.data)
+#
+#     def perform_update(self, serializer):
+#         serializer.save()
+#
+#     def partial_update(self, request, *args, **kwargs):
+#         kwargs['partial'] = True
+#         return self.update(request, *args, **kwargs)
 
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        serializer = TreatmentSerializer(data=data)
 
-        serializer.is_valid(raise_exception=True)
+class TreatmentAPIView(ListCreateAPIView):
 
-        serializer.save()
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        response = Response()
-
-        response.data = {
-            'message': 'Treatement Created Successfully',
-            'data': serializer.data
-        }
-
-        return response
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def partial_update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        return self.update(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
@@ -147,23 +142,6 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
 
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        serializer = ReservationSerializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-        print(data)
-        serializer.save()
-
-        response = Response()
-
-        response.data = {
-            'message': 'Reservation Created Successfully',
-            'data': serializer.data
-        }
-
-        return response
-
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
         instance = self.get_object()
@@ -184,14 +162,6 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def perform_destroy(self, instance):
-        instance.delete()
 
 
 class DoctorViewSet(RetrieveModelMixin, ListModelMixin,

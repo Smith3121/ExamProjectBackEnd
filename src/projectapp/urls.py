@@ -1,13 +1,13 @@
 from django.urls import path
 from rest_framework import routers
 from . import views
-from .views import UserViewSet, TreatmentViewSet, ReservationViewSet
+from .views import UserViewSet, ReservationViewSet, TreatmentAPIView
 
 router = routers.SimpleRouter(trailing_slash=False)
 
 router.register('user', views.UserViewSet, basename='user')
 
-router.register('treatment', views.TreatmentViewSet, basename='treatment')
+# router.register('treatment', TreatmentAPIView.as_view(), basename='treatment')
 
 router.register('reservation', views.ReservationViewSet, basename='reservation')
 

@@ -16,9 +16,9 @@ from projectapp.services.user_service import UserService
 
 
 class UserSerializer(serializers.ModelSerializer):
-    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -47,17 +47,17 @@ class UserSerializer(serializers.ModelSerializer):
 
             raise e
 
-#
-# class UserSerializerForRes(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id', 'username']
-#
-#
-# class TreatmentSerializerForRes(serializers.ModelSerializer):
-#     class Meta:
-#         model = Treatment
-#         fields = ('id', 'treatment_name')
+
+class UserSerializerForRes(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
+
+class TreatmentSerializerForRes(serializers.ModelSerializer):
+    class Meta:
+        model = Treatment
+        fields = ('id', 'treatment_name')
 
 
 class DoctorSerializer(serializers.ModelSerializer):
@@ -67,12 +67,19 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
-    # doctor = DoctorSerializer()
-    # doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(user_type=3))
+    doctor = DoctorSerializer()
 
     class Meta:
         model = Treatment
         fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', "doctor")
+
+    def create(self, validated_data):
+        treatment_data = validated_data.pop('treatment')
+        doctor = User.objects.create(**validated_data)
+        for tre_data in treatment_data:
+            Treatment.objects.create(doctor=doctor, **tre_data)
+
+        return doctor
 
 
 class ReservationSerializer(serializers.ModelSerializer):
