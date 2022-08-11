@@ -12,69 +12,13 @@ from base.error_messages import ErrorMessage
 from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
     , Reservation, TokenRequest, IneligibleDomain
-
-
 from projectapp.services.user_service import UserService
-
-
-# class DateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Dates
-#         fields = '__all__'
-
-
-class UserSerializerForRes(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username']
-
-
-class TreatmentSerializerForRes(serializers.ModelSerializer):
-    class Meta:
-        model = Treatment
-        fields = ('id', 'treatment_name')
-
-
-class DoctorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username']
-
-
-class TreatmentSerializer(serializers.ModelSerializer):
-    doctor = DoctorSerializer(read_only=True)
-
-    class Meta:
-        model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'doctor', 'id')
-
-
-class ReservationSerializer(serializers.ModelSerializer):
-    doctor = DoctorSerializer(read_only=True)
-    user = UserSerializerForRes(read_only=True)
-    treatment = TreatmentSerializerForRes(read_only=True)
-    # date = DateSerializer(read_only=True)
-
-    class Meta:
-        model = Reservation
-        fields = '__all__'
-
-
-# class ResSerializerForUser(serializers.ModelSerializer):
-#     doctor = DoctorSerializer(read_only=True)
-#     user = UserSerializerForRes(read_only=True)
-#     treatment = TreatmentSerializerForRes(read_only=True)
-#
-#     class Meta:
-#         model = Reservation
-#         fields = ('date', "id", "doctor", "user", "treatment")
 
 
 class UserSerializer(serializers.ModelSerializer):
     reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # detailedReservation = ResSerializerForUser(read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -87,7 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
                   'presentation', 'pic_url', 'reservations', 'treatment', 'specialisation', "doctor"]
-        # fields = '__all__'
 
     def is_valid(self, raise_exception=False):
         try:
@@ -103,6 +46,43 @@ class UserSerializer(serializers.ModelSerializer):
                     raise FormInvalid(ErrorMessage.email_is_invalid())
 
             raise e
+
+#
+# class UserSerializerForRes(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username']
+#
+#
+# class TreatmentSerializerForRes(serializers.ModelSerializer):
+#     class Meta:
+#         model = Treatment
+#         fields = ('id', 'treatment_name')
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
+
+class TreatmentSerializer(serializers.ModelSerializer):
+    # doctor = DoctorSerializer()
+    # doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(user_type=3))
+
+    class Meta:
+        model = Treatment
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', "doctor")
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    # doctor = DoctorSerializer()
+    # user = UserSerializerForRes()
+    # treatment = TreatmentSerializerForRes()
+
+    class Meta:
+        model = Reservation
+        fields = '__all__'
 
 
 class TokenRequestSerializer(serializers.ModelSerializer):
