@@ -32,8 +32,9 @@ def custom_exception_handler(exc, context):
     if response is not None:
         if type(exc) == ValidationError:
             print("Mi van az exc.detailben title elott", exc.detail[list(exc.detail)[0]][0])
-            print("Mi van az exc.detailben elso resz elott",exc.detail[list(exc.detail)[0]])
+            print("Mi van az exc.detailben elso resz elott", exc.detail[list(exc.detail)[0]])
             print("Mi van az exc.detailben", exc.detail[list(exc.detail)])
+            print("Exc det egyedul", exc.detail)
             customized_response = {'message': exc.detail[list(exc.detail)[0]][0].title()}
 
             response.data = customized_response

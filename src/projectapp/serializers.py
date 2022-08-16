@@ -16,9 +16,9 @@ from projectapp.services.user_service import UserService
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -52,44 +52,97 @@ class UserSerializerForRes(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username']
+        extra_kwargs = {
+            'username': {'validators': []},
+        }
 
 
 class TreatmentSerializerForRes(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = ('id', 'treatment_name')
+        extra_kwargs = {
+            'treatment_name': {'validators': []},
+        }
 
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username']
+        extra_kwargs = {
+            'username': {'validators': []},
+        }
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
-    doctor = DoctorSerializer()
+    doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Treatment
         fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', "doctor")
 
-    def create(self, validated_data):
-        treatment_data = validated_data.pop('treatment')
-        doctor = User.objects.create(**validated_data)
-        for tre_data in treatment_data:
-            Treatment.objects.create(doctor=doctor, **tre_data)
+    # def create(self, validated_data):
+    #     doctor = validated_data.pop('doctor')
+    #     doctor = User.objects.get(**doctor)
+    #
+    #     return Treatment.objects.create(doctor=doctor, **validated_data)
 
-        return doctor
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        doctor_data = DoctorSerializer(value.doctor)
+        data['doctor'] = doctor_data.data
+        return data
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    # doctor = DoctorSerializer()
-    # user = UserSerializerForRes()
-    # treatment = TreatmentSerializerForRes()
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # treatment = serializers.PrimaryKeyRelatedField(queryset=Treatment.objects.all())
 
     class Meta:
         model = Reservation
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ('user', 'treatment', 'doctor', 'medical_note', 'problem_description', 'reservation_status', 'date')
+
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        doctor_data = DoctorSerializer(value.doctor)
+        user_data = UserSerializerForRes(value.user)
+        treatment_data = TreatmentSerializerForRes(value.treatment)
+        data['user'] = user_data.data
+        data['doctor'] = doctor_data.data
+        data['treatment'] = treatment_data.data
+        return data
+
+    # def create(self, validated_data):
+    #     doctor = validated_data.pop('doctor')
+    #     doctor = User.objects.get(**doctor)
+    #     treatment = validated_data.pop('treatment')
+    #     treatment = Treatment.objects.get(**treatment)
+    #     user = validated_data.pop('user')
+    #     user = User.objects.get(**user)
+    #
+    #     return Reservation.objects.create(doctor=doctor, treatment=treatment, user=user, **validated_data)
+
+    # def create(self, validated_data):
+    #     print(validated_data)
+    #     user_data = User.objects.get(id=validated_data.pop('user'))
+    #     treatment_data = Treatment.objects.get(id=validated_data.pop('treatment'))
+    #     doctor_data = User.objects.get(id=validated_data.pop('doctor'))
+    #     instance = Reservation.objects.create(**validated_data)
+    #     instance.user=user_data
+    #     instance.treatment = treatment_data
+    #     instance.doctor = doctor_data
+    #     return instance
+
+    # def create(self, validated_data):
+    #     return Reservation.objects.create(
+    #         **validated_data,
+    #         user_id=validated_data.pop('user'),
+    #         treatment_id=validated_data.pop('treatment'),
+    #         doctor_id=validated_data.pop('doctor')
+    #     )
 
 
 class TokenRequestSerializer(serializers.ModelSerializer):

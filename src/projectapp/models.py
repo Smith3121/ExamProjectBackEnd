@@ -79,14 +79,14 @@ class Reservation(models.Model):
     class ReservationStatus(models.IntegerChoices):
         CREATED = 1
         ACCEPTED = 2
-        REFUSEDBYDOCTOR = 3
+        CANCELLEDBYDOCTOR = 3
         DONE = 4
-        REFUSEDBYUSER = 5
+        CANCELLEDBYUSER = 5
 
     user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE, blank=True, null=True)
     treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE)
     medical_note = models.TextField(blank=True, null=True, default=' ')
-    problem_description = models.TextField(blank=True, default="")
+    problem_description = models.TextField(blank=True, null=True, default="")
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
     doctor = models.ForeignKey(User, related_name='doctor', on_delete=models.CASCADE)
     date = models.DateTimeField()

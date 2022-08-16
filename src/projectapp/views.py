@@ -103,6 +103,7 @@ class ListDoctorReservationByDate(RetrieveModelMixin, ListModelMixin, viewsets.G
 class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                        viewsets.GenericViewSet):
 
+
     queryset = Treatment.objects.all()
     serializer_class = TreatmentSerializer
 
