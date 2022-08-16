@@ -15,10 +15,21 @@ from projectapp.models import User, Treatment \
 from projectapp.services.user_service import UserService
 
 
+class TreatmentSerializerForRes(serializers.ModelSerializer):
+    class Meta:
+        model = Treatment
+        fields = ('id', 'treatment_name')
+        extra_kwargs = {
+            'treatment_name': {'validators': []},
+        }
+
+
 class UserSerializer(serializers.ModelSerializer):
-    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # treatment = serializers.PrimaryKeyRelatedField(queryset=Treatment.objects.all())
+    treatment = TreatmentSerializerForRes(many=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -30,7 +41,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-                  'presentation', 'pic_url', 'reservations', 'treatment', 'specialisation', "doctor"]
+                  'presentation', 'pic_url', 'reservations', 'specialisation', "doctor", 'treatment']
+    #
+    # def to_representation(self, value):
+    #     data = super().to_representation(value)
+    #     treatment_data = TreatmentSerializerForRes(value.treatment)
+    #     data['treatment'] = treatment_data.data
+    #     return data
 
     def is_valid(self, raise_exception=False):
         try:
@@ -57,15 +74,6 @@ class UserSerializerForRes(serializers.ModelSerializer):
         }
 
 
-class TreatmentSerializerForRes(serializers.ModelSerializer):
-    class Meta:
-        model = Treatment
-        fields = ('id', 'treatment_name')
-        extra_kwargs = {
-            'treatment_name': {'validators': []},
-        }
-
-
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -76,17 +84,11 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
-    doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Treatment
         fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', "doctor")
-
-    # def create(self, validated_data):
-    #     doctor = validated_data.pop('doctor')
-    #     doctor = User.objects.get(**doctor)
-    #
-    #     return Treatment.objects.create(doctor=doctor, **validated_data)
 
     def to_representation(self, value):
         data = super().to_representation(value)
@@ -96,14 +98,10 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    # doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    # treatment = serializers.PrimaryKeyRelatedField(queryset=Treatment.objects.all())
 
     class Meta:
         model = Reservation
-        # fields = '__all__'
-        fields = ('user', 'treatment', 'doctor', 'medical_note', 'problem_description', 'reservation_status', 'date')
+        fields = ('user', 'treatment', 'doctor', 'medical_note', 'problem_description', 'reservation_status', 'date', 'id')
 
     def to_representation(self, value):
         data = super().to_representation(value)
