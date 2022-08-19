@@ -153,6 +153,17 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
+    def get_queryset(self):
+
+        date = self.request.query_params.get('date')
+        username = self.request.query_params.get('username')
+        print(date)
+        if date is not None:
+            queryset = self.queryset.filter(date=date)
+        if username is not None:
+            queryset = self.queryset.filter(user__username=username)
+        return queryset
+
 
 class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
                     viewsets.GenericViewSet):

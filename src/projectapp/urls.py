@@ -1,7 +1,6 @@
-from django.urls import path
 from rest_framework import routers
+
 from . import views
-from .views import UserViewSet, TreatmentViewSet, ReservationViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
 
