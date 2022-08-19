@@ -17,10 +17,10 @@ from rest_framework.viewsets import ViewSet
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleException, DomainIsNotEligibleAPIException
 from projectapp.models import User, Treatment \
-    , Reservation
+    , Reservation, Rating
 # , Dates
 from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
-    TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer
+    TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer, RatingSerializer
 from projectapp.services.token_service import TokenService, MTokenService
 from projectapp.services.user_service import UserService
 
@@ -102,8 +102,6 @@ class ListDoctorReservationByDate(RetrieveModelMixin, ListModelMixin, viewsets.G
 
 class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
                        viewsets.GenericViewSet):
-
-
     queryset = Treatment.objects.all()
     serializer_class = TreatmentSerializer
 
@@ -127,15 +125,6 @@ class TreatmentViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Upd
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
-
-
-# class TreatmentAPIView(ListCreateAPIView):
-#
-#     def get(self, request, *args, **kwargs):
-#         return self.list(request, *args, **kwargs)
-#
-#     def post(self, request, *args, **kwargs):
-#         return self.create(request, *args, **kwargs)
 
 
 class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
@@ -175,6 +164,33 @@ class DoctorViewSet(RetrieveModelMixin, ListModelMixin,
         data = User.objects.filter(user_type=3)
         serializer = DoctorSerializer(data, many=True)
         return Response(serializer.data)
+
+
+class RatingViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
 
 
 class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
@@ -229,11 +245,16 @@ class MTokenHandler:
             raise UserDoesNotExistAPIException(ErrorMessage.user_does_not_exist_api_exception())
 
         email = serializer.validated_data['email']
+        # username = serializer.validated_data['username']
+        # gender = serializer.validated_data['gender']
+        # number = serializer.validated_data['number']
 
         user: User
         try:
             base_url = request.build_absolute_uri('/')
             user = UserService.create_by_email_with_request_params(email, rtype, base_url, *args, **kwargs)
+            # user = UserService.create_by_email_with_request_params(email, username, gender, number, rtype, base_url,
+            #                                                        *args, **kwargs)
         except DomainIsNotEligibleException:
             raise DomainIsNotEligibleAPIException(ErrorMessage.domain_is_not_eligible_api_exception())
 

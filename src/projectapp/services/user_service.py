@@ -23,6 +23,22 @@ class IneligibleDomainService:
 
 class UserService:
 
+    # @staticmethod
+    # def create_by_email_with_request_params(email: str, username, gender, number, rtype: str, base_url: str,
+    #                                         *args,
+    #                                         **kwargs) -> User:
+    #     """
+    #     Type: 'r' - register or
+    #           'l' - login
+    #     """
+    #
+    #     # IneligibleDomainService.test_domain_by_name(TrainingSpaceService.get_training_space_id_from_email(email))
+    #
+    #     # Create user using the drfpasswordless app
+    #     environ_input = f'email={parse.quote(email)}, ' \
+    #                     f'username={parse.quote(username)},' \
+    #                     f' gender={parse.quote(gender)},' \
+    #                     f' number={parse.quote(number)}'
     @staticmethod
     def create_by_email_with_request_params(email: str, rtype: str, base_url: str, *args, **kwargs) -> User:
         """
@@ -30,10 +46,9 @@ class UserService:
               'l' - login
         """
 
-        # IneligibleDomainService.test_domain_by_name(TrainingSpaceService.get_training_space_id_from_email(email))
-
         # Create user using the drfpasswordless app
         environ_input = f'email={parse.quote(email)}'
+
         wsgi_request = WSGIRequest({
             'REQUEST_METHOD': 'POST',
             'PATH_INFO': '/auth/email/',

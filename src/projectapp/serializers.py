@@ -1,3 +1,5 @@
+from django.db.models import Avg
+from django.forms import IntegerField
 from rest_framework import serializers
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -11,8 +13,19 @@ from rest_framework.validators import UniqueValidator
 from base.error_messages import ErrorMessage
 from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
-    , Reservation, TokenRequest, IneligibleDomain
+    , Reservation, TokenRequest, IneligibleDomain, Rating
 from projectapp.services.user_service import UserService
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    # average_rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Rating
+        fields = '__all__'
+
+    # def get_average_rating(self, instance):
+    #     return instance.rating.aggregate(average_rating=Avg('rating'))['average_rating']
 
 
 class TreatmentSerializerForRes(serializers.ModelSerializer):
@@ -25,11 +38,11 @@ class TreatmentSerializerForRes(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     # treatment = serializers.PrimaryKeyRelatedField(queryset=Treatment.objects.all())
-    treatment = TreatmentSerializerForRes(many=True)
+    # treatment = TreatmentSerializerForRes(many=True)
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -41,8 +54,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
-                  'presentation', 'pic_url', 'reservations', 'specialisation', "doctor", 'treatment']
-    #
+                  'presentation', 'pic_url', 'reservations', 'specialisation', "doctor", "treatment"]
+
     # def to_representation(self, value):
     #     data = super().to_representation(value)
     #     treatment_data = TreatmentSerializerForRes(value.treatment)
@@ -82,13 +95,24 @@ class DoctorSerializer(serializers.ModelSerializer):
             'username': {'validators': []},
         }
 
+    # def doctors(self):
+    #     return User.objects.filter(usertype=3)
+
 
 class TreatmentSerializer(serializers.ModelSerializer):
-    # doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # number = IntegerField(source='', required=False, allow_null=True)
+    # rating_count = serializers.SerializerMethodField()
+    # average_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'comment', 'id', "doctor")
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'id', "doctor")
+
+    # def get_rating_count(self, instance):
+    #     return instance.treatment.rating_set.count()
+
+    # def get_average_rating(self, instance):
+    #     return instance.rating.treatment.aggregate(average_rating=Avg('rating'))['average_rating']
 
     def to_representation(self, value):
         data = super().to_representation(value)
@@ -96,32 +120,24 @@ class TreatmentSerializer(serializers.ModelSerializer):
         data['doctor'] = doctor_data.data
         return data
 
+    # def avg_rating(self):
+    #     return Treatment.objects.annotate(avg_rating=Avg('rating_set__rating'))
 
-class ReservationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Reservation
-        fields = ('user', 'treatment', 'doctor', 'medical_note', 'problem_description', 'reservation_status', 'date', 'id')
-
-    def to_representation(self, value):
-        data = super().to_representation(value)
-        doctor_data = DoctorSerializer(value.doctor)
-        user_data = UserSerializerForRes(value.user)
-        treatment_data = TreatmentSerializerForRes(value.treatment)
-        data['user'] = user_data.data
-        data['doctor'] = doctor_data.data
-        data['treatment'] = treatment_data.data
-        return data
+    # def to_representation(self, value):
+    #     data = super().to_representation(value)
+    #     doctor_data = DoctorSerializer(value.doctor)
+    #     data['doctor'] = doctor_data.data
+    #     return data
 
     # def create(self, validated_data):
     #     doctor = validated_data.pop('doctor')
     #     doctor = User.objects.get(**doctor)
-    #     treatment = validated_data.pop('treatment')
-    #     treatment = Treatment.objects.get(**treatment)
-    #     user = validated_data.pop('user')
-    #     user = User.objects.get(**user)
+    #     # treatment = validated_data.pop('treatment')
+    #     # treatment = Treatment.objects.get(**treatment)
+    #     # user = validated_data.pop('user')
+    #     # user = User.objects.get(**user)
     #
-    #     return Reservation.objects.create(doctor=doctor, treatment=treatment, user=user, **validated_data)
+    #     return Treatment.objects.create(doctor=doctor, **validated_data)
 
     # def create(self, validated_data):
     #     print(validated_data)
@@ -141,6 +157,23 @@ class ReservationSerializer(serializers.ModelSerializer):
     #         treatment_id=validated_data.pop('treatment'),
     #         doctor_id=validated_data.pop('doctor')
     #     )
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = ('user', 'treatment', 'doctor', 'medical_note', 'problem_description', 'reservation_status', 'date',
+                  'id')
+
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        doctor_data = DoctorSerializer(value.doctor)
+        user_data = UserSerializerForRes(value.user)
+        treatment_data = TreatmentSerializerForRes(value.treatment)
+        data['user'] = user_data.data
+        data['doctor'] = doctor_data.data
+        data['treatment'] = treatment_data.data
+        return data
 
 
 class TokenRequestSerializer(serializers.ModelSerializer):

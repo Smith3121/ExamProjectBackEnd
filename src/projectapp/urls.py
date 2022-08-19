@@ -11,6 +11,8 @@ router.register('treatment', views.TreatmentViewSet, basename='treatment')
 
 router.register('reservation', views.ReservationViewSet, basename='reservation')
 
+router.register('rating', views.RatingViewSet, basename='rating')
+
 router.register('token', views.TokenViewSet, basename='user')
 
 router.register('mtoken', views.MTokenViewSet, basename='user')

@@ -2,7 +2,6 @@ import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import CharField
 from django.utils.translation import gettext_lazy as _
 
 from base.models import TimeStampedModel
@@ -31,14 +30,14 @@ class User(AbstractUser):
         blank=True
     )
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    user_type = models.IntegerField(choices=Usertype.choices, blank=True)
-    gender = models.IntegerField(choices=Gender.choices, blank=True)
-    number = models.CharField(max_length=30, blank=True)
+    user_type = models.IntegerField(choices=Usertype.choices, blank=True, null=True)
+    gender = models.IntegerField(choices=Gender.choices, blank=True, null=True)
+    number = models.CharField(max_length=30, blank=True, null=True)
     date_of_birth = models.DateTimeField(null=True, blank=True)
-    specialisation = models.CharField(max_length=120, default='', blank=True)
+    specialisation = models.CharField(max_length=120, default='', blank=True, null=True)
 
-    presentation = models.TextField(blank=True)
-    pic_url = models.CharField(max_length=1000, blank=True)
+    presentation = models.TextField(blank=True, null=True)
+    pic_url = models.CharField(max_length=1000, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.username
@@ -48,31 +47,28 @@ class Treatment(models.Model):
     treatment_name = models.CharField(max_length=100, unique=True)
     pic_url = models.CharField(max_length=1000)
     treatment_description = models.TextField(blank=True)
-    comment = models.TextField(blank=True)
     doctor = models.ForeignKey(User, related_name='treatment', on_delete=models.CASCADE)
 
-    # @property
-    # def rating_average(self):
-    #     return self.reviews.aggregate(models.Avg('rating')).get('rating__avg')
-    #
-    # @property
-    # def review_count(self):
-    #     return self.reviews.count()
 
-    def __str__(self) -> CharField:
+    def __str__(self):
         return self.treatment_name
 
 
-# class Rating(models.Model):
-#     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=3)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-#     treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE)
-#
-#     class Meta:
-#         unique_together = ['user', 'treatment']
-#
-#     def __str__(self):
-#         return f'{self.user} - {self.rating}'
+class Rating(models.Model):
+    class RatingChoices(models.IntegerChoices):
+        POOR = 1
+        AVERAGE = 2
+        GOOD = 3
+        GREAT = 4
+        EXCELLENT = 5
+
+    comment = models.TextField(blank=True, null=True)
+    rating = models.IntegerField(choices=RatingChoices.choices, null=True, blank=True)
+    treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE, blank=True, null=True)
+
+
+    def __str__(self):
+        return str(self.rating)
 
 
 class Reservation(models.Model):
