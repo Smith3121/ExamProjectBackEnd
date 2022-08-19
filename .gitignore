@@ -1,0 +1,12 @@
+
+src/projectapp/services/__pycache__/
+
+src/projectapp/migrations/__pycache__/
+
+src/projectapp/__pycache__/
+
+src/finalproject/__pycache__/
+
+src/base/__pycache__/
+
+.idea/

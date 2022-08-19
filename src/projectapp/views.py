@@ -1,17 +1,7 @@
-from Tools.scripts.make_ctype import values
-from django.db.models import DateTimeField, Avg
-from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.utils.functional import SimpleLazyObject
 from rest_framework import viewsets, status
-from rest_framework.generics import ListCreateAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
 from rest_framework.response import Response
-from rest_framework.settings import api_settings
-from rest_framework.views import APIView
-from datetime import datetime
-
 from rest_framework.viewsets import ViewSet
 
 from base.error_messages import ErrorMessage
@@ -191,6 +181,21 @@ class RatingViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Update
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+
+class FilterReservationByName(viewsets.GenericViewSet, ListModelMixin, RetrieveModelMixin):
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Reservation.objects.all()
+        username = self.request.query_params.get('username')
+        if username is not None:
+            queryset = queryset.filter(user__username=username)
+        return queryset
 
 
 class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):

@@ -27,4 +27,6 @@ router.register('docresbyname', views.ListDoctorReservationByNameViewSet, basena
 
 router.register('doclistresbydate', views.ListDoctorReservationByDate, basename='doclistresbydate')
 
+router.register('filterreservationbyname', views.FilterReservationByName, basename='filterreservationbyname')
+
 urlpatterns = router.urls
