@@ -1,7 +1,9 @@
+import pytz
 from Tools.scripts.make_ctype import values
 from django.db.models import DateTimeField, Avg
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 from rest_framework import viewsets, status
 from rest_framework.generics import ListCreateAPIView
@@ -10,7 +12,7 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveMode
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
-from datetime import datetime
+from datetime import datetime, tzinfo
 
 from rest_framework.viewsets import ViewSet
 
@@ -59,6 +61,12 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+    def list_doctors(self, request, *args, **kwargs):
+
+        data = User.objects.filter(user_type=3)
+        serializer = DoctorSerializer(data, many=True)
+        return Response(serializer.data)
 
 
 class RemoveDoctorDescriptionViewSet(UpdateModelMixin,
@@ -155,11 +163,36 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
 
     def get_queryset(self):
 
+        queryset = Reservation.objects.all()
         date = self.request.query_params.get('date')
+
+        datesQuery = queryset.values('date')
+        print("This is datesQuery", datesQuery)
+        listDatesQuery = list(datesQuery)
+
+        print(datesQuery)
+        print("First dates query", datesQuery[0])
+        qs = Reservation.objects.all()
+        qs = qs.filter()
+        print("hejj", date)
+        print(type(date))
+
+        dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
+        current_tz = timezone.get_current_timezone()
+        t2 = current_tz.localize(dateInDateTime)
+        toDate = t2.date()
+        print("hejjo", dateInDateTime)
+        print(type(dateInDateTime))
+        print("Date-te alakitas", toDate)
+        print(type(toDate))
+
+
         username = self.request.query_params.get('username')
-        print(date)
         if date is not None:
-            queryset = self.queryset.filter(date=date)
+            print("todate again", toDate)
+            queryset = self.queryset.filter(date__year=toDate.year,
+                                            date__month=toDate.month,
+                                            date__day=toDate.day)
         if username is not None:
             queryset = self.queryset.filter(user__username=username)
         return queryset

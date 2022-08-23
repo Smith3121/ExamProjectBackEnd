@@ -49,7 +49,6 @@ class Treatment(models.Model):
     treatment_description = models.TextField(blank=True)
     doctor = models.ForeignKey(User, related_name='treatment', on_delete=models.CASCADE)
 
-
     def __str__(self):
         return self.treatment_name
 
@@ -65,7 +64,6 @@ class Rating(models.Model):
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField(choices=RatingChoices.choices, null=True, blank=True)
     treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE, blank=True, null=True)
-
 
     def __str__(self):
         return str(self.rating)
