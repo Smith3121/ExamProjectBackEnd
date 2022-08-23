@@ -148,8 +148,7 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
+
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
@@ -166,30 +165,13 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         queryset = Reservation.objects.all()
         date = self.request.query_params.get('date')
 
-        datesQuery = queryset.values('date')
-        print("This is datesQuery", datesQuery)
-        listDatesQuery = list(datesQuery)
-
-        print(datesQuery)
-        print("First dates query", datesQuery[0])
-        qs = Reservation.objects.all()
-        qs = qs.filter()
-        print("hejj", date)
-        print(type(date))
-
         dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
         current_tz = timezone.get_current_timezone()
         t2 = current_tz.localize(dateInDateTime)
         toDate = t2.date()
-        print("hejjo", dateInDateTime)
-        print(type(dateInDateTime))
-        print("Date-te alakitas", toDate)
-        print(type(toDate))
-
 
         username = self.request.query_params.get('username')
         if date is not None:
-            print("todate again", toDate)
             queryset = self.queryset.filter(date__year=toDate.year,
                                             date__month=toDate.month,
                                             date__day=toDate.day)
