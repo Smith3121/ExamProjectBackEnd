@@ -162,13 +162,15 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
 
     def get_queryset(self):
 
+        global toDate
         queryset = Reservation.objects.all()
         date = self.request.query_params.get('date')
 
-        dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
-        current_tz = timezone.get_current_timezone()
-        t2 = current_tz.localize(dateInDateTime)
-        toDate = t2.date()
+        if date is not None:
+            dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
+            current_tz = timezone.get_current_timezone()
+            t2 = current_tz.localize(dateInDateTime)
+            toDate = t2.date()
 
         username = self.request.query_params.get('username')
         if date is not None:
