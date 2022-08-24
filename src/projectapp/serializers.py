@@ -19,12 +19,6 @@ from projectapp.services.user_service import UserService
 
 
 class RatingSerializer(serializers.ModelSerializer):
-    # avg_ratings = serializers.SerializerMethodField(read_only=True)
-    #
-    # def get_avg_ratings(self, treatment):
-    #     print("treatment pssssssssssssssssssssssssssssssssssssssssssssssssssrintt", treatment, type(treatment))
-    #     print("2treatment pssssssssssssssssssssssssssssssssssssssssssssssssssrintt", Rating.objects.filter(treatment_id=treatment.id))
-    #     return Treatment.objects.filter(id=treatment.pk).aggregate(Avg('rating'))
 
     class Meta:
         model = Rating
@@ -101,13 +95,18 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 class TreatmentSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField(read_only=True)
+    comment = serializers.SerializerMethodField(read_only=True)
+
+    def get_comment(self, treatment):
+        print("This is the prinnttttttt", Rating.objects.filter(treatment_id=treatment.pk))
+        return Rating.objects.filter(treatment_id=treatment.pk).values('comment', 'id')
 
     def get_rating(self, treatment):
         return Treatment.objects.filter(id=treatment.pk).aggregate(Avg('rating__rating'))
 
     class Meta:
         model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'id', "doctor", 'rating')
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'id', "doctor", 'rating', 'comment')
 
     def to_representation(self, value):
         data = super().to_representation(value)
