@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import EmailField
 from rest_framework.validators import UniqueValidator
+from django.db.models import Avg, Count
 
 # from base.error_messages import ErrorMessage
 # from base.exceptions import EmailAlreadyExists, FormInvalid
@@ -18,14 +19,16 @@ from projectapp.services.user_service import UserService
 
 
 class RatingSerializer(serializers.ModelSerializer):
-    # average_rating = serializers.SerializerMethodField()
+    # avg_ratings = serializers.SerializerMethodField(read_only=True)
+    #
+    # def get_avg_ratings(self, treatment):
+    #     print("treatment pssssssssssssssssssssssssssssssssssssssssssssssssssrintt", treatment, type(treatment))
+    #     print("2treatment pssssssssssssssssssssssssssssssssssssssssssssssssssrintt", Rating.objects.filter(treatment_id=treatment.id))
+    #     return Treatment.objects.filter(id=treatment.pk).aggregate(Avg('rating'))
 
     class Meta:
         model = Rating
-        fields = '__all__'
-
-    # def get_average_rating(self, instance):
-    #     return instance.rating.aggregate(average_rating=Avg('rating'))['average_rating']
+        fields = ('comment', 'rating', 'treatment', 'user', 'id')
 
 
 class TreatmentSerializerForRes(serializers.ModelSerializer):
@@ -90,73 +93,27 @@ class UserSerializerForRes(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ['id', 'username', 'pic_url', 'specialisation', 'presentation']
         extra_kwargs = {
             'username': {'validators': []},
         }
 
-    # def doctors(self):
-    #     return User.objects.filter(usertype=3)
-
 
 class TreatmentSerializer(serializers.ModelSerializer):
-    # number = IntegerField(source='', required=False, allow_null=True)
-    # rating_count = serializers.SerializerMethodField()
-    # average_rating = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField(read_only=True)
+
+    def get_rating(self, treatment):
+        return Treatment.objects.filter(id=treatment.pk).aggregate(Avg('rating__rating'))
 
     class Meta:
         model = Treatment
-        fields = ('treatment_name', 'pic_url', 'treatment_description', 'id', "doctor")
-
-    # def get_rating_count(self, instance):
-    #     return instance.treatment.rating_set.count()
-
-    # def get_average_rating(self, instance):
-    #     return instance.rating.treatment.aggregate(average_rating=Avg('rating'))['average_rating']
+        fields = ('treatment_name', 'pic_url', 'treatment_description', 'id', "doctor", 'rating')
 
     def to_representation(self, value):
         data = super().to_representation(value)
         doctor_data = DoctorSerializer(value.doctor)
         data['doctor'] = doctor_data.data
         return data
-
-    # def avg_rating(self):
-    #     return Treatment.objects.annotate(avg_rating=Avg('rating_set__rating'))
-
-    # def to_representation(self, value):
-    #     data = super().to_representation(value)
-    #     doctor_data = DoctorSerializer(value.doctor)
-    #     data['doctor'] = doctor_data.data
-    #     return data
-
-    # def create(self, validated_data):
-    #     doctor = validated_data.pop('doctor')
-    #     doctor = User.objects.get(**doctor)
-    #     # treatment = validated_data.pop('treatment')
-    #     # treatment = Treatment.objects.get(**treatment)
-    #     # user = validated_data.pop('user')
-    #     # user = User.objects.get(**user)
-    #
-    #     return Treatment.objects.create(doctor=doctor, **validated_data)
-
-    # def create(self, validated_data):
-    #     print(validated_data)
-    #     user_data = User.objects.get(id=validated_data.pop('user'))
-    #     treatment_data = Treatment.objects.get(id=validated_data.pop('treatment'))
-    #     doctor_data = User.objects.get(id=validated_data.pop('doctor'))
-    #     instance = Reservation.objects.create(**validated_data)
-    #     instance.user=user_data
-    #     instance.treatment = treatment_data
-    #     instance.doctor = doctor_data
-    #     return instance
-
-    # def create(self, validated_data):
-    #     return Reservation.objects.create(
-    #         **validated_data,
-    #         user_id=validated_data.pop('user'),
-    #         treatment_id=validated_data.pop('treatment'),
-    #         doctor_id=validated_data.pop('doctor')
-    #     )
 
 
 class ReservationSerializer(serializers.ModelSerializer):

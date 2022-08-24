@@ -1,24 +1,14 @@
-from Tools.scripts.make_ctype import values
-from django.db.models import DateTimeField, Avg
-from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.utils.functional import SimpleLazyObject
+from django.db.models import Avg
 from rest_framework import viewsets, status
-from rest_framework.generics import ListCreateAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
 from rest_framework.response import Response
-from rest_framework.settings import api_settings
-from rest_framework.views import APIView
-from datetime import datetime
-
 from rest_framework.viewsets import ViewSet
 
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleException, DomainIsNotEligibleAPIException
 from projectapp.models import User, Treatment \
     , Reservation, Rating
-# , Dates
 from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
     TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer, RatingSerializer
 from projectapp.services.token_service import TokenService, MTokenService

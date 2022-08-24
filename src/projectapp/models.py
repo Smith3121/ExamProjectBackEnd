@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Avg, Count
 from django.utils.translation import gettext_lazy as _
 
 from base.models import TimeStampedModel
@@ -49,9 +50,8 @@ class Treatment(models.Model):
     treatment_description = models.TextField(blank=True)
     doctor = models.ForeignKey(User, related_name='treatment', on_delete=models.CASCADE)
 
-
     def __str__(self):
-        return self.treatment_name
+        return str(self.treatment_name)
 
 
 class Rating(models.Model):
@@ -65,7 +65,7 @@ class Rating(models.Model):
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField(choices=RatingChoices.choices, null=True, blank=True)
     treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE, blank=True, null=True)
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return str(self.rating)
