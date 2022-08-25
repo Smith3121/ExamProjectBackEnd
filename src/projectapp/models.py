@@ -57,9 +57,13 @@ class Treatment(models.Model):
 class Rating(models.Model):
     class RatingChoices(models.IntegerChoices):
         POOR = 1
+        ABOVEPOOR = 1.5
         AVERAGE = 2
+        ABOVEAVERAGE = 2.5
         GOOD = 3
+        ABOVEGOOD = 3.5
         GREAT = 4
+        ABOVEGREAT = 4.5
         EXCELLENT = 5
 
     comment = models.TextField(blank=True, null=True)
