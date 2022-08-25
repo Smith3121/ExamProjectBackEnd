@@ -53,12 +53,6 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
-    def list_doctors(self, request, *args, **kwargs):
-
-        data = User.objects.filter(user_type=3)
-        serializer = DoctorSerializer(data, many=True)
-        return Response(serializer.data)
-
 
 class RemoveDoctorDescriptionViewSet(UpdateModelMixin,
                                      viewsets.GenericViewSet):
@@ -237,26 +231,6 @@ class FAQViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMod
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
-    def get_queryset(self):
-
-        global toDate
-        queryset = Reservation.objects.all()
-        date = self.request.query_params.get('date')
-
-        if date is not None:
-            dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
-            current_tz = timezone.get_current_timezone()
-            t2 = current_tz.localize(dateInDateTime)
-            toDate = t2.date()
-
-        username = self.request.query_params.get('username')
-        if date is not None:
-            queryset = self.queryset.filter(date__year=toDate.year,
-                                            date__month=toDate.month,
-                                            date__day=toDate.day)
-        if username is not None:
-            queryset = self.queryset.filter(user__username=username)
-        return queryset
 
 class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = TokenRequestSerializer
