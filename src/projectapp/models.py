@@ -69,7 +69,10 @@ class Rating(models.Model):
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField(choices=RatingChoices.choices, null=True, blank=True)
     treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE, blank=True, null=True)
+<<<<<<< HEAD
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+=======
+>>>>>>> feature/hhand-78
 
     def __str__(self):
         return str(self.rating)

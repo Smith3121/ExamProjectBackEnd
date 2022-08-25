@@ -1,8 +1,25 @@
+<<<<<<< HEAD
 from django.db.models import Avg
+=======
+import pytz
+from Tools.scripts.make_ctype import values
+from django.db.models import DateTimeField, Avg
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.functional import SimpleLazyObject
+>>>>>>> feature/hhand-78
 from rest_framework import viewsets, status
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
 from rest_framework.response import Response
+<<<<<<< HEAD
+=======
+from rest_framework.settings import api_settings
+from rest_framework.views import APIView
+from datetime import datetime, tzinfo
+
+>>>>>>> feature/hhand-78
 from rest_framework.viewsets import ViewSet
 
 from base.error_messages import ErrorMessage
@@ -49,6 +66,12 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+    def list_doctors(self, request, *args, **kwargs):
+
+        data = User.objects.filter(user_type=3)
+        serializer = DoctorSerializer(data, many=True)
+        return Response(serializer.data)
 
 
 class RemoveDoctorDescriptionViewSet(UpdateModelMixin,
@@ -130,8 +153,7 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
+
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
@@ -142,6 +164,27 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+    def get_queryset(self):
+
+        global toDate
+        queryset = Reservation.objects.all()
+        date = self.request.query_params.get('date')
+
+        if date is not None:
+            dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
+            current_tz = timezone.get_current_timezone()
+            t2 = current_tz.localize(dateInDateTime)
+            toDate = t2.date()
+
+        username = self.request.query_params.get('username')
+        if date is not None:
+            queryset = self.queryset.filter(date__year=toDate.year,
+                                            date__month=toDate.month,
+                                            date__day=toDate.day)
+        if username is not None:
+            queryset = self.queryset.filter(user__username=username)
+        return queryset
 
 
 class DoctorViewSet(RetrieveModelMixin, ListModelMixin,

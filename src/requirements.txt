@@ -3,4 +3,3 @@ djangorestframework==3.12.4
 mysqlclient==2.0.3
 drfpasswordless==1.5.7
 user-agents==2.2.0
-django-cors-headers
