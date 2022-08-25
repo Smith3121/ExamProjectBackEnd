@@ -14,3 +14,7 @@ def create_auth_token(sender, instance=None, **kwargs):
     if len(instance.email) > 0:
         print("Instance email is longer than zero")
         instance.username = instance.email
+        # instance.username = instance.username
+        # instance.email = instance.email
+        # instance.gender = instance.gender
+        # instance.number = instance.number
