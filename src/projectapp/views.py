@@ -27,7 +27,13 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
     def create(self, request, *args, **kwargs):
         user = MTokenHandler.handle(request, self.get_serializer, 'r', *args, **kwargs)
 
+        user.gender = request.data['gender']
+        user.number = request.data['number']
+        user.email = request.data['email']
+        user.save()
+
         serializer = self.get_serializer(user)
+
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -192,8 +198,7 @@ class RatingViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Update
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
+
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
@@ -284,16 +289,12 @@ class MTokenHandler:
             raise UserDoesNotExistAPIException(ErrorMessage.user_does_not_exist_api_exception())
 
         email = serializer.validated_data['email']
-        # username = serializer.validated_data['username']
-        # gender = serializer.validated_data['gender']
-        # number = serializer.validated_data['number']
 
         user: User
         try:
             base_url = request.build_absolute_uri('/')
             user = UserService.create_by_email_with_request_params(email, rtype, base_url, *args, **kwargs)
-            # user = UserService.create_by_email_with_request_params(email, username, gender, number, rtype, base_url,
-            #                                                        *args, **kwargs)
+
         except DomainIsNotEligibleException:
             raise DomainIsNotEligibleAPIException(ErrorMessage.domain_is_not_eligible_api_exception())
 

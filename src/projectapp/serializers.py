@@ -1,22 +1,20 @@
-from django.db.models import Avg
-from django.forms import IntegerField
-from rest_framework import serializers
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import EmailField
 from rest_framework.validators import UniqueValidator
-from django.db.models import Avg, Count
-
-# from base.error_messages import ErrorMessage
-# from base.exceptions import EmailAlreadyExists, FormInvalid
-# from projectapp.models import User, TokenRequest
-# from projectapp.services.user_service import UserService
+from django.db.models import Avg
 from base.error_messages import ErrorMessage
 from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
     , Reservation, TokenRequest, IneligibleDomain, Rating, FAQ
 from projectapp.services.user_service import UserService
 
+
+# class UserViewSetSerialier(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['number', 'username', ]
+#
 
 class FAQSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,8 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
     reservations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     treatment = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     doctor = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # treatment = serializers.PrimaryKeyRelatedField(queryset=Treatment.objects.all())
-    # treatment = TreatmentSerializerForRes(many=True)
+
     email = EmailField(
         allow_blank=False,
         label='Email address',
@@ -57,12 +54,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'number', 'username',
                   'presentation', 'pic_url', 'reservations', 'specialisation', "doctor", "treatment"]
-
-    # def to_representation(self, value):
-    #     data = super().to_representation(value)
-    #     treatment_data = TreatmentSerializerForRes(value.treatment)
-    #     data['treatment'] = treatment_data.data
-    #     return data
 
     def is_valid(self, raise_exception=False):
         try:
@@ -103,7 +94,6 @@ class TreatmentSerializer(serializers.ModelSerializer):
     comment = serializers.SerializerMethodField(read_only=True)
 
     def get_comment(self, treatment):
-        print("This is the prinnttttttt", Rating.objects.filter(treatment_id=treatment.pk))
         return Rating.objects.filter(treatment_id=treatment.pk).values('comment', 'id')
 
     def get_rating(self, treatment):
