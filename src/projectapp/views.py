@@ -1,33 +1,26 @@
-<<<<<<< HEAD
-from django.db.models import Avg
-=======
-import pytz
-from Tools.scripts.make_ctype import values
-from django.db.models import DateTimeField, Avg
-from django.http import Http404
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.utils.functional import SimpleLazyObject
->>>>>>> feature/hhand-78
 from rest_framework import viewsets, status
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
 from rest_framework.response import Response
-<<<<<<< HEAD
-=======
-from rest_framework.settings import api_settings
-from rest_framework.views import APIView
-from datetime import datetime, tzinfo
+from datetime import datetime
+from datetime import datetime
 
->>>>>>> feature/hhand-78
+from django.utils import timezone
+from rest_framework import viewsets, status
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
+    DestroyModelMixin
+from rest_framework.response import Response
+
 from rest_framework.viewsets import ViewSet
 
 from base.error_messages import ErrorMessage
 from base.exceptions import UserDoesNotExistAPIException, DomainIsNotEligibleException, DomainIsNotEligibleAPIException
 from projectapp.models import User, Treatment \
-    , Reservation, Rating
+    , Reservation, Rating, FAQ
 from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
-    TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer, RatingSerializer
+    TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer, \
+    RatingSerializer, FAQSerializer
 from projectapp.services.token_service import TokenService, MTokenService
 from projectapp.services.user_service import UserService
 
@@ -225,6 +218,52 @@ class RatingViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Update
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
+
+class FAQViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
+                         viewsets.GenericViewSet):
+    queryset = FAQ.objects.all()
+    serializer_class = FAQSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
+    def get_queryset(self):
+
+        global toDate
+        queryset = Reservation.objects.all()
+        date = self.request.query_params.get('date')
+
+        if date is not None:
+            dateInDateTime = datetime.strptime(date, '%Y-%m-%d')
+            current_tz = timezone.get_current_timezone()
+            t2 = current_tz.localize(dateInDateTime)
+            toDate = t2.date()
+
+        username = self.request.query_params.get('username')
+        if date is not None:
+            queryset = self.queryset.filter(date__year=toDate.year,
+                                            date__month=toDate.month,
+                                            date__day=toDate.day)
+        if username is not None:
+            queryset = self.queryset.filter(user__username=username)
+        return queryset
 
 class TokenViewSet(CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = TokenRequestSerializer

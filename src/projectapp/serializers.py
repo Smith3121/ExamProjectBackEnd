@@ -14,12 +14,17 @@ from django.db.models import Avg, Count
 from base.error_messages import ErrorMessage
 from base.exceptions import FormInvalid, EmailAlreadyExists
 from projectapp.models import User, Treatment \
-    , Reservation, TokenRequest, IneligibleDomain, Rating
+    , Reservation, TokenRequest, IneligibleDomain, Rating, FAQ
 from projectapp.services.user_service import UserService
 
 
-class RatingSerializer(serializers.ModelSerializer):
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = '__all__'
 
+
+class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = ('comment', 'rating', 'treatment', 'user', 'id')
