@@ -13,7 +13,7 @@ from projectapp.models import User, Treatment \
     , Reservation, Rating, FAQ
 from projectapp.serializers import UserSerializer, TreatmentSerializer, ReservationSerializer, DoctorSerializer, \
     TokenRequestSerializer, TokenResponseSerializer, MTokenRequestSerializer, MTokenResponseSerializer, \
-    RatingSerializer, FAQSerializer
+    RatingSerializer, FAQSerializer, UserViewSetSerialier
 from projectapp.services.token_service import TokenService, MTokenService
 from projectapp.services.user_service import UserService
 
@@ -26,17 +26,10 @@ class UserViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMo
 
     def create(self, request, *args, **kwargs):
         user = MTokenHandler.handle(request, self.get_serializer, 'r', *args, **kwargs)
-
-        user.gender = request.data['gender']
-        user.number = request.data['number']
-        user.email = request.data['email']
-        user.save()
-
-        serializer = self.get_serializer(user)
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        serializer = UserViewSetSerialier(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
@@ -139,7 +132,6 @@ class ReservationViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, U
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
-
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
@@ -198,7 +190,6 @@ class RatingViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Update
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
-
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
@@ -212,7 +203,7 @@ class RatingViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, Update
 
 
 class FAQViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin,
-                         viewsets.GenericViewSet):
+                 viewsets.GenericViewSet):
     queryset = FAQ.objects.all()
     serializer_class = FAQSerializer
 
@@ -224,7 +215,6 @@ class FAQViewSet(ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateMod
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
-
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)

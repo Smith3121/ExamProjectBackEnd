@@ -10,11 +10,11 @@ from projectapp.models import User, Treatment \
 from projectapp.services.user_service import UserService
 
 
-# class UserViewSetSerialier(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['number', 'username', ]
-#
+class UserViewSetSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['number', 'gender', 'email']
+
 
 class FAQSerializer(serializers.ModelSerializer):
     class Meta:

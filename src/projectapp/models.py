@@ -32,7 +32,7 @@ class User(AbstractUser):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user_type = models.IntegerField(choices=Usertype.choices, blank=True, null=True)
     gender = models.IntegerField(choices=Gender.choices, blank=True, null=True)
-    number = models.CharField(max_length=30, blank=True, null=True)
+    phone_number = models.CharField(max_length=30, blank=True, null=True)
     date_of_birth = models.DateTimeField(null=True, blank=True)
     specialisation = models.CharField(max_length=120, default='', blank=True, null=True)
 
