@@ -12,6 +12,7 @@ class User(AbstractUser):
         ADMIN = 1
         USER = 2
         DOCTOR = 3
+        SUPERADMIN = 4
 
     class Gender(models.IntegerChoices):
         MAN = 1
