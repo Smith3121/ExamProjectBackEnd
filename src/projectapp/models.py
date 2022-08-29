@@ -78,8 +78,8 @@ class Reservation(models.Model):
         DONE = 4
         CANCELLEDBYUSER = 5
 
-    user = models.ForeignKey(User, related_name="reservations", on_delete=models.CASCADE, blank=True, null=True)
-    treatment = models.ForeignKey(Treatment, related_name="reservations", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE, blank=True, null=True)
+    treatment = models.ForeignKey(Treatment, on_delete=models.CASCADE)
     medical_note = models.TextField(blank=True, null=True, default=' ')
     problem_description = models.TextField(blank=True, null=True, default="")
     reservation_status = models.IntegerField(choices=ReservationStatus.choices, default=ReservationStatus.CREATED)
@@ -96,6 +96,9 @@ class Reservation(models.Model):
 class FAQ(models.Model):
     question = models.CharField(max_length=512)
     answer = models.TextField(blank=True)
+
+    def __str__(self):
+        return str(self.question)
 
 
 class TokenRequest(TimeStampedModel):
