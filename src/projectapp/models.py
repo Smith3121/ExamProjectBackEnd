@@ -36,6 +36,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=30, blank=True, null=True)
     date_of_birth = models.DateTimeField(null=True, blank=True)
     specialisation = models.CharField(max_length=120, default='', blank=True, null=True)
+    name = models.CharField(max_length=256, default="")
 
     presentation = models.TextField(blank=True, null=True)
     pic_url = models.CharField(max_length=1000, blank=True, null=True)

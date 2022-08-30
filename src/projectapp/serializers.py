@@ -13,25 +13,25 @@ from projectapp.services.user_service import UserService
 class UserSerializerForRes(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ['id', 'name']
         extra_kwargs = {
-            'username': {'validators': []},
+            'name': {'validators': []}
         }
 
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'pic_url', 'specialisation', 'presentation']
+        fields = ['id', 'pic_url', 'specialisation', 'presentation', 'name']
         extra_kwargs = {
-            'username': {'validators': []},
+            'name': {'validators': []}
         }
 
 
 class UserViewSetSerialier(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['phone_number', 'gender', 'email']
+        fields = ['phone_number', 'gender', 'email', 'name']
 
 
 class FAQSerializer(serializers.ModelSerializer):
@@ -79,7 +79,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'phone_number', 'username',
+        fields = ['id', 'email', 'email_verified', 'user_type', 'gender', 'date_of_birth', 'phone_number', 'name',
                   'presentation', 'pic_url', 'specialisation', "doctor", 'user', 'treatment']
 
     def is_valid(self, raise_exception=False):
